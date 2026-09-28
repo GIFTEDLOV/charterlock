@@ -9,7 +9,9 @@ deterministic charter, authority, evidence, lifecycle, semantic, and
 provenance boundaries explicit. The frontend is deferred until the protocol
 reads and writes are canonical.
 
-See `ARCHITECTURE_LOCK.md`, `THREAT_MODEL.md`, and `BUILD_PLAN.md`.
+See `ARCHITECTURE_LOCK.md`, `THREAT_MODEL.md`, `BUILD_PLAN.md`, and
+`frontend/README.md`. The Phase 3 frontend defaults to a clearly labeled
+controlled adapter because no contract has been deployed.
 
 Phase 2 now includes the real GenLayer semantic boundary: authenticated
 evidence retrieval, an exact eight-field fact vector, custom semantic
@@ -26,4 +28,4 @@ C:\Users\DELL\.beacon-v8-v06-rc2\Scripts\genvm-lint.exe schema contracts\charter
 ```
 
 No deployment, live blockchain write, GitHub push, or Vercel deployment is
-performed by the Phase 1.5/Phase 2 checkpoint.
+performed by the Phase 3 checkpoint.
