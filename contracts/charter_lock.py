@@ -475,7 +475,14 @@ def _retrieve_one_evidence(
             return {"evidence_id": evidence["evidence_id"], "status": "INVALID_RESPONSE"}
         location = _header_value(response.headers, "location")
         if location is not None:
-            redirected = _normalize_url(location)
+            try:
+                redirected = _normalize_url(location)
+            except gl.vm.UserError:
+                # A malformed or non-HTTPS redirect is an authority failure,
+                # not an unavailable source. Preserve the typed distinction
+                # so a transport policy violation cannot be misclassified as
+                # an infrastructure outage.
+                return {"evidence_id": evidence["evidence_id"], "status": "AUTHORITY_MISMATCH"}
             if redirected["normalized_hostname"] != authority["hostname"]:
                 return {"evidence_id": evidence["evidence_id"], "status": "AUTHORITY_MISMATCH"}
             if not _path_matches(str(redirected["path"]), str(authority["path_prefix"])):
@@ -585,6 +592,23 @@ def _semantic_equivalent(
 ) -> bool:
     if not isinstance(leader_result, dict) or not isinstance(validator_result, dict):
         return False
+    if set(leader_result.keys()) != {"semantic_result", "failure_causes"}:
+        return False
+    if set(validator_result.keys()) != {"semantic_result", "failure_causes"}:
+        return False
+    leader_causes = leader_result.get("failure_causes")
+    validator_causes = validator_result.get("failure_causes")
+    if not isinstance(leader_causes, list) or not isinstance(validator_causes, list):
+        return False
+    if any(
+        type(item) is not str or item not in INFRASTRUCTURE_FAILURES
+        for item in leader_causes + validator_causes
+    ):
+        return False
+    if len(set(leader_causes)) != len(leader_causes) or len(
+        set(validator_causes)
+    ) != len(validator_causes):
+        return False
     leader_vector = leader_result.get("semantic_result")
     validator_vector = validator_result.get("semantic_result")
     if not isinstance(leader_vector, dict) or not isinstance(validator_vector, dict):
@@ -593,10 +617,8 @@ def _semantic_equivalent(
         validator_vector.get(key) for key in SEMANTIC_KEYS
     ):
         return False
-    return _canonical_failure_causes(
-        [str(item) for item in leader_result.get("failure_causes", [])]
-    ) == _canonical_failure_causes(
-        [str(item) for item in validator_result.get("failure_causes", [])]
+    return _canonical_failure_causes(leader_causes) == _canonical_failure_causes(
+        validator_causes
     )
 
 
@@ -783,12 +805,22 @@ class CharterLock(gl.contract.Contract):
         consensus_result = gl.vm.run_nondet(leader, validator)
         if not isinstance(consensus_result, dict):
             _fail("MALFORMED_CONSENSUS_RESULT")
+        if set(consensus_result.keys()) != {"semantic_result", "failure_causes"}:
+            _fail("MALFORMED_CONSENSUS_RESULT")
+        consensus_causes = consensus_result.get("failure_causes")
+        if not isinstance(consensus_causes, list) or any(
+            type(item) is not str or item not in INFRASTRUCTURE_FAILURES
+            for item in consensus_causes
+        ):
+            _fail("MALFORMED_CONSENSUS_RESULT")
+        if len(set(consensus_causes)) != len(consensus_causes):
+            _fail("MALFORMED_CONSENSUS_RESULT")
         vector = _validate_semantic_vector(
             consensus_result.get("semantic_result"),
             str(charter["temporal_semantics"]),
         )
         failure_causes = _canonical_failure_causes(
-            [str(item) for item in consensus_result.get("failure_causes", [])]
+            consensus_causes
         )
         canonical_state = _derive_canonical_state(vector, failure_causes)
         resolution_id, next_count = self._next_identifier(

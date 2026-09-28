@@ -14,8 +14,8 @@
     "e2e": "node node_modules/playwright/cli.js test"
   },
   "dependencies": {
-    "@genlayer/js": "npm:genlayer-js@1.1.8",
-    "genlayer-js": "1.1.8",
+    "@genlayer/js": "npm:genlayer-js@2.0.0-rc.1",
+    "genlayer-js": "2.0.0-rc.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-router-dom": "7.18.4",

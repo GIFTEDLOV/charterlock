@@ -22,7 +22,7 @@ import { test, expect } from "@playwright/test";
   });
 
   test("proof page does not fabricate deployment metadata", async ({ page }) => {
-    await page.goto("/proof"); await expect(page.locator("span.status-pill", { hasText: "NOT DEPLOYED" })).toBeVisible(); await expect(page.getByText("NOT YET PERFORMED", { exact: true })).toBeVisible(); await expect(page.getByText("323fcf4a694d8b4070b043078b316055f090a643a6fdfb987afa5b9f2f7d3e45", { exact: true })).toBeVisible();
+    await page.goto("/proof"); await expect(page.locator("span.status-pill", { hasText: "NOT DEPLOYED" })).toBeVisible(); await expect(page.getByText("NOT YET PERFORMED", { exact: true })).toBeVisible(); await expect(page.getByText("70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a", { exact: true })).toBeVisible();
   });
 
   test("core route surfaces load without horizontal overflow", async ({ page }) => {

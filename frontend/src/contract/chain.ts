@@ -1,15 +1,11 @@
-import { studionet } from "genlayer-js/chains";
+import { studioDevnet } from "genlayer-js/chains";
 import { CHAIN_ID } from "../domain/types";
-import { config } from "../config";
 
-// The SDK's built-in studionet is 61999. CharterLock targets Studio-dev 61997,
-// so this explicit clone prevents an accidental write to the wrong network.
-export const charterLockStudio = {
-  ...studionet,
-  id: CHAIN_ID,
-  name: "CharterLock Studio-dev",
-  rpcUrls: { default: { http: [config.rpcUrl] } },
-} as typeof studionet;
+// genlayer-js 2.0.0-rc.1 provides the authoritative Studio-dev definition.
+// Keep the application guard below so wallet/network mismatches remain explicit.
+export const charterLockStudio = studioDevnet;
+
+if (charterLockStudio.id !== CHAIN_ID) throw new Error("SDK_STUDIO_DEV_CHAIN_MISMATCH");
 
 export function networkGuard(chainId: number, contractAddress?: string) {
   return {

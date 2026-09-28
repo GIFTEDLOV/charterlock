@@ -1,6 +1,6 @@
 export const SCHEMA_VERSION = "BINARY_EVENT_V1" as const;
 export const CHAIN_ID = 61997 as const;
-export const CONTRACT_SOURCE_SHA256 = "323fcf4a694d8b4070b043078b316055f090a643a6fdfb987afa5b9f2f7d3e45" as const;
+export const CONTRACT_SOURCE_SHA256 = "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a" as const;
 
 export type TemporalSemantics =
   | "OCCURRENCE_BY_DEADLINE"
@@ -127,13 +127,18 @@ export interface Resolution {
 
 export interface ContractInfo {
   protocol: string;
-  version: string;
+  protocol_version: string;
+  first_schema: string;
   phase: string;
-  semantic_adjudication_ready: boolean;
+  semantic_adjudicator_ready: boolean;
   business_outcomes: string[];
   technical_states: string[];
-  override_functions: string[];
-  custody_functions: string[];
+  procedural_challenge_reason_codes: string[];
+  no_privileged_override: boolean;
+  no_custody_or_betting: boolean;
+  charter_count: number;
+  case_count: number;
+  evidence_count: number;
 }
 
 export interface CharterDraft {

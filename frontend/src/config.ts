@@ -5,7 +5,7 @@ export const config = {
   chainId: CHAIN_ID,
   rpcUrl: import.meta.env.VITE_CHARTERLOCK_RPC_URL ?? "https://studio-dev.genlayer.com/api",
   contractAddress: import.meta.env.VITE_CHARTERLOCK_CONTRACT_ADDRESS,
-  sourceSha256: "323fcf4a694d8b4070b043078b316055f090a643a6fdfb987afa5b9f2f7d3e45",
+  sourceSha256: "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
 };
 
 export const isLiveConfigured = config.mode === "live" && Boolean(config.contractAddress);

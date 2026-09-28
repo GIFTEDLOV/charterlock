@@ -2,13 +2,16 @@
 
 This is a controlled proof / pre-deployment release record. It is not a live
 deployment qualification and contains no contract address or transaction hash.
+The source hash and toolchain values below are the previously reported Phase 4
+record and are superseded by `PHASE45_RELEASE_RECONCILIATION.md`; they are not
+the authoritative current release-candidate values.
 
 | Item | Value |
 | --- | --- |
 | Project | CharterLock Protocol |
 | Schema | `BINARY_EVENT_V1` |
 | Contract source | `contracts/charter_lock.py` |
-| Current source SHA-256 | `323fcf4a694d8b4070b043078b316055f090a643a6fdfb987afa5b9f2f7d3e45` |
+| Previously reported source SHA-256 (not reproducible) | `323fcf4a694d8b4070b043078b316055f090a643a6fdfb987afa5b9f2f7d3e45` |
 | Previous verified Phase 3 SHA-256 | `7cbf394642bfc4a4d626888b0601c12c7d53568f99e51244a14632869083c0b1` |
 | Target network | Studio-dev |
 | Target chain ID | `61997` |

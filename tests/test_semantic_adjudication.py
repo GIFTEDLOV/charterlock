@@ -503,6 +503,21 @@ def test_validator_retrieves_independently_in_controlled_direct_mode(direct_depl
     assert direct_vm.run_validator() is False
 
 
+def test_validator_rejects_extra_consensus_envelope_fields(direct_deploy, direct_vm):
+    contract = _deploy(direct_deploy)
+    _, case_id, _ = _prepare_case(contract)
+    _mock_web(direct_vm, BASE_URL)
+    _mock_semantics(direct_vm, _vector("YES"))
+    contract.adjudicate(case_id)
+    assert direct_vm.run_validator(
+        leader_result={
+            "semantic_result": _vector("YES"),
+            "failure_causes": [],
+            "payment_amount": "attacker-controlled",
+        }
+    ) is False
+
+
 def test_equivalence_compares_semantics_and_typed_causes_only():
     left = {"semantic_result": _vector("YES"), "failure_causes": []}
     right = {"semantic_result": _vector("YES"), "failure_causes": []}

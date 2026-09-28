@@ -100,8 +100,12 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
   async getResolution(idValue: string): Promise<Resolution> { return getOrThrow(this.state.resolutions[idValue], "RESOLUTION"); }
   async getResolutionHistory(caseId: string): Promise<Resolution[]> { return (this.state.history[caseId] ?? []).map((item) => getOrThrow(this.state.resolutions[item], "RESOLUTION")); }
   async getContractInfo(): Promise<ContractInfo> {
-    return { protocol: "CharterLock Protocol", version: "0.1.0", phase: "Phase 3 controlled proof", semantic_adjudication_ready: true,
-      business_outcomes: ["YES", "NO"], technical_states: ["INCONCLUSIVE", "INSUFFICIENT_EVIDENCE", "SOURCE_UNAVAILABLE", "EVIDENCE_CONFLICT"], override_functions: [], custody_functions: [] };
+    return { protocol: "CharterLock Protocol", protocol_version: "0.2.0-phase2", first_schema: SCHEMA_VERSION,
+      phase: "PHASE_2_SEMANTIC_ADJUDICATION", semantic_adjudicator_ready: true,
+      business_outcomes: ["YES", "NO"], technical_states: ["INCONCLUSIVE", "INSUFFICIENT_EVIDENCE", "SOURCE_UNAVAILABLE", "EVIDENCE_CONFLICT"],
+      procedural_challenge_reason_codes: ["SEMANTIC_BOUNDARY_VIOLATION", "EVIDENCE_ROOT_MISMATCH", "AUTHORITY_BINDING_VIOLATION", "INVALID_STATE_TRANSITION"],
+      no_privileged_override: true, no_custody_or_betting: true, charter_count: Object.keys(this.state.charters).length,
+      case_count: Object.keys(this.state.cases).length, evidence_count: Object.keys(this.state.evidence).length };
   }
   async network(): Promise<NetworkStatus> { return { chainId: CHAIN_ID, expectedChainId: CHAIN_ID, contractAddress: DEMO_CONTRACT, configured: false, match: false }; }
   async reconcile(hash: string): Promise<ReconciliationResult> { return { hash, finalized: true, executionSucceeded: true, status: "CONTROLLED_DEMO_CONFIRMED" }; }

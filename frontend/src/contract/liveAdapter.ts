@@ -1,5 +1,5 @@
 import { createClient } from "genlayer-js";
-import { ExecutionResult, TransactionStatus } from "genlayer-js/types";
+import { ExecutionResult } from "genlayer-js/types";
 import type { Address } from "viem";
 import { config } from "../config";
 import type { Charter, CaseRecord, ContractInfo, EvidenceRecord, NetworkStatus, ProtocolAction, ProtocolAdapter, ReconciliationResult, Resolution } from "../domain/types";
@@ -52,9 +52,9 @@ export class LiveGenLayerAdapter implements ProtocolAdapter {
     return { hash: String(hash), action, createdAt: Date.now() };
   }
   async reconcile(hash: string): Promise<ReconciliationResult> {
-    const transaction = await this.client().waitForTransactionReceipt({ hash: hash as any, status: TransactionStatus.FINALIZED });
+    const transaction = await this.client().waitForFinalization({ hash: hash as any, fullTransaction: true });
     const executionSucceeded = transaction.txExecutionResultName === ExecutionResult.FINISHED_WITH_RETURN;
-    return { hash, finalized: transaction.status === TransactionStatus.FINALIZED, executionSucceeded, status: transaction.txExecutionResultName ?? String(transaction.status) };
+    return { hash, finalized: true, executionSucceeded, status: transaction.txExecutionResultName ?? transaction.statusName ?? String(transaction.status) };
   }
   async precondition(action: ProtocolAction): Promise<unknown> {
     if (action.type === "create_charter") return await this.getCharterCount();
