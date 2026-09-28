@@ -1,3 +1,5 @@
+import type { ProtocolAction } from "../domain/types";
+
 export type TransactionPhase =
   | "PRECONDITION_READ" | "AWAITING_WALLET" | "BROADCAST" | "HASH_PERSISTED"
   | "RECONCILING" | "FINALIZED" | "EXECUTION_CHECK" | "CANONICAL_READBACK" | "CONFIRMED"
@@ -6,9 +8,11 @@ export type TransactionPhase =
 
 export interface PendingTransaction {
   hash: string;
+  action: ProtocolAction;
   actionType: string;
   entityId?: string;
   expectedPostcondition: string;
+  precondition?: unknown;
   createdAt: number;
   chainId: number;
   contractAddress?: string;

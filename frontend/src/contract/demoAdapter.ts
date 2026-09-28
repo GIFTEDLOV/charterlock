@@ -29,14 +29,14 @@ function initialState(): DemoState {
     charter_id: "CHR-00000001", creator: DEMO_CREATOR, schema_version: SCHEMA_VERSION,
     domain: "Event contract resolution", question: "Did the named public event occur before the event deadline?",
     allowed_outcomes: ["YES", "NO"], event_deadline: 1_735_689_600, evidence_deadline: 1_735_776_000,
-    temporal_semantics: "OFFICIAL_CONFIRMATION_BY_DEADLINE", authority_policy: "FROZEN_AUTHORITY_SNAPSHOT",
-    source_policy: "HTTPS_BOUND_TO_AUTHORITY", min_corroboration: 2, conflict_policy: "CONFLICT_IS_INCONCLUSIVE",
-    unavailable_source_policy: "SOURCE_UNAVAILABLE_IS_NON_BUSINESS_STATE", challenge_window_seconds: 86_400,
+    temporal_semantics: "OFFICIAL_CONFIRMATION_BY_DEADLINE", authority_policy: "REGISTERED_AUTHORITY_REQUIRED",
+    source_policy: "BOUND_HOSTNAME_AND_PATH", min_corroboration: 2, conflict_policy: "CONFLICT_INCONCLUSIVE",
+    unavailable_source_policy: "UNAVAILABLE_INCONCLUSIVE", challenge_window_seconds: 86_400,
     max_challenge_generations: 2, state: "FROZEN", authority_ids: ["official-record", "public-wire"],
     charter_hash: "0x" + "a".repeat(64),
     authority_snapshot: [
       { authority_key: "CHR-00000001::official-record", charter_id: "CHR-00000001", authority_id: "official-record", authority_class: "OFFICIAL", hostname: "records.example.gov", path_prefix: "/events/", subject: "Official event record", priority: 10, active_at_freeze: true },
-      { authority_key: "CHR-00000001::public-wire", charter_id: "CHR-00000001", authority_id: "public-wire", authority_class: "PUBLIC", hostname: "wire.example.org", path_prefix: "/bulletins/", subject: "Public corroboration", priority: 20, active_at_freeze: true },
+      { authority_key: "CHR-00000001::public-wire", charter_id: "CHR-00000001", authority_id: "public-wire", authority_class: "SECONDARY", hostname: "wire.example.org", path_prefix: "/bulletins/", subject: "Public corroboration", priority: 20, active_at_freeze: true },
     ],
   };
   const evidence1: EvidenceRecord = {
@@ -154,6 +154,7 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
       this.resolve(action.caseId, 0, "", ""); suffix = action.caseId.slice(-8);
     } else if (action.type === "challenge") {
       const caseValue = getOrThrow(this.state.cases[action.caseId], "CASE"); if (caseValue.state !== "CHALLENGEABLE") throw new Error("CHALLENGE_NOT_ELIGIBLE");
+      if (action.ground === "PROCEDURAL_VIOLATION" && action.proceduralReason !== "SEMANTIC_BOUNDARY_VIOLATION") throw new Error("INVALID_PROCEDURAL_REASON");
       const challengeId = id("CHAL", this.state.next.challenge++); caseValue.state = "CHALLENGED"; caseValue.pending_challenge_id = challengeId;
       caseValue.pending_evidence_root = rootFor(action.caseId, caseValue.generation + 1, caseValue.evidence_count); suffix = challengeId.slice(-8);
     } else if (action.type === "readjudicate") {
@@ -161,7 +162,7 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
       this.resolve(action.caseId, caseValue.generation + 1, caseValue.pending_evidence_root, caseValue.pending_challenge_id); suffix = action.caseId.slice(-8);
     } else if (action.type === "finalize_case") {
       const caseValue = getOrThrow(this.state.cases[action.caseId], "CASE"); if (!caseValue.active_resolution_id) throw new Error("CASE_NOT_FINALIZABLE");
-      caseValue.state = "FINAL"; caseValue.terminal = true; const resolution = this.state.resolutions[caseValue.active_resolution_id]; if (resolution) { resolution.status = "FINAL"; resolution.canonical_state = "FINAL"; }
+      caseValue.state = "FINAL"; caseValue.terminal = true; const resolution = this.state.resolutions[caseValue.active_resolution_id]; if (resolution) { resolution.status = "FINAL"; }
       suffix = action.caseId.slice(-8);
     }
     this.save();
@@ -179,7 +180,7 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
       status: "ACTIVE", resolved_at: Math.floor(Date.now() / 1000), challenge_deadline: Math.floor(Date.now() / 1000) + 86_400 };
     if (previous && this.state.resolutions[previous]) this.state.resolutions[previous].status = "SUPERSEDED";
     this.state.resolutions[resolutionId] = resolution; this.state.history[caseId] = [...(this.state.history[caseId] ?? []), resolutionId];
-    caseValue.active_resolution_id = resolutionId; caseValue.generation = generation; caseValue.state = generation ? "READJUDICATED" : "CHALLENGEABLE"; caseValue.challenge_deadline = resolution.challenge_deadline; caseValue.last_resolution_at = resolution.resolved_at; caseValue.evidence_root = resolution.evidence_root; caseValue.pending_challenge_id = ""; caseValue.pending_evidence_root = "";
+    caseValue.active_resolution_id = resolutionId; caseValue.generation = generation; caseValue.state = "CHALLENGEABLE"; caseValue.challenge_deadline = resolution.challenge_deadline; caseValue.last_resolution_at = resolution.resolved_at; caseValue.evidence_root = resolution.evidence_root; caseValue.pending_challenge_id = ""; caseValue.pending_evidence_root = "";
   }
 }
 

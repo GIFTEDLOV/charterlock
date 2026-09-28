@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { clearPendingTransactions, loadPendingTransactions, persistPendingTransaction, removePendingTransaction, updatePendingTransaction } from "./persistence";
 import type { PendingTransaction } from "./types";
 
-const tx: PendingTransaction = { hash: "0xabc", actionType: "freeze_charter", entityId: "CHR-1", expectedPostcondition: "FROZEN", createdAt: 1, chainId: 61997, contractAddress: undefined, phase: "HASH_PERSISTED" };
+const tx: PendingTransaction = { hash: "0xabc", action: { type: "freeze_charter", charterId: "CHR-1" }, actionType: "freeze_charter", entityId: "CHR-1", expectedPostcondition: "FROZEN", precondition: { state: "DRAFT" }, createdAt: 1, chainId: 61997, contractAddress: undefined, phase: "HASH_PERSISTED" };
 describe("crash-safe transaction persistence", () => {
   it("persists the exact hash", () => { persistPendingTransaction(tx); expect(loadPendingTransactions()[0].hash).toBe("0xabc"); });
   it("updates a same-hash reconciliation phase", () => { persistPendingTransaction(tx); updatePendingTransaction("0xabc", { phase: "RECONCILING" }); expect(loadPendingTransactions()[0].phase).toBe("RECONCILING"); });

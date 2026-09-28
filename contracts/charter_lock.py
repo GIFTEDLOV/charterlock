@@ -59,6 +59,13 @@ SOURCE_POLICY = "BOUND_HOSTNAME_AND_PATH"
 CONFLICT_POLICIES = ("CONFLICT_INCONCLUSIVE", "CONFLICT_FAIL_CLOSED")
 UNAVAILABLE_POLICIES = ("UNAVAILABLE_RETRY", "UNAVAILABLE_INCONCLUSIVE")
 CHALLENGE_GROUNDS = ("NEW_ADMISSIBLE_EVIDENCE", "PROCEDURAL_VIOLATION")
+PROCEDURAL_REASON_CODES = (
+    "SEMANTIC_BOUNDARY_VIOLATION",
+    "EVIDENCE_ROOT_MISMATCH",
+    "AUTHORITY_BINDING_VIOLATION",
+    "INVALID_STATE_TRANSITION",
+)
+OFFICIAL_AUTHORITY_CLASSES = ("OFFICIAL", "REGULATOR")
 
 MAX_SCHEMA_BYTES = 32
 MAX_DOMAIN_BYTES = 128
@@ -169,6 +176,7 @@ def _normalize_url(source_url: str) -> dict[str, str]:
         _fail("URL_PORT_OR_FRAGMENT")
     normalized_hostname = _normalize_hostname(hostname)
     path = parsed.path if parsed.path != "" else "/"
+    _validate_unambiguous_path(path, "MALFORMED_URL")
     if _byte_len(path) > MAX_PATH_BYTES or _byte_len(parsed.query) > MAX_QUERY_BYTES:
         _fail("OVERSIZED_URL_COMPONENT")
     normalized = "https://" + normalized_hostname + path
@@ -187,7 +195,19 @@ def _validate_path_prefix(path_prefix: str) -> str:
         _fail("INVALID_PATH_PREFIX")
     if "?" in path_prefix or "#" in path_prefix:
         _fail("INVALID_PATH_PREFIX")
-    return path_prefix if path_prefix != "" else "/"
+    if path_prefix == "":
+        return "/"
+    _validate_unambiguous_path(path_prefix, "INVALID_PATH_PREFIX")
+    return path_prefix.rstrip("/") or "/"
+
+
+def _validate_unambiguous_path(path: str, code: str) -> None:
+    """Reject transport spellings whose server-side path semantics can drift."""
+
+    if "\\" in path or "%" in path or "//" in path:
+        _fail(code)
+    if any(segment in (".", "..") for segment in path.split("/")):
+        _fail(code)
 
 
 def _path_matches(path: str, path_prefix: str) -> bool:
@@ -339,6 +359,7 @@ def _frozen_evidence_policy(
     """Derive policy facts from frozen metadata, never from model prose."""
 
     authority_ids: list[str] = []
+    authority_classes: list[str] = []
     authority_requirement_met = len(evidence_records) > 0
     for evidence in evidence_records:
         authority = _authority_for_evidence(evidence, charter)
@@ -347,6 +368,15 @@ def _frozen_evidence_policy(
         authority_id = str(evidence.get("authority_id", ""))
         if authority_id not in authority_ids:
             authority_ids.append(authority_id)
+        if authority is not None:
+            authority_class = str(authority.get("authority_class", ""))
+            if authority_class not in authority_classes:
+                authority_classes.append(authority_class)
+    if str(charter["temporal_semantics"]) in (
+        "OFFICIAL_CONFIRMATION_BY_DEADLINE",
+        "OCCURRENCE_AND_CONFIRMATION_BY_DEADLINE",
+    ) and not any(item in OFFICIAL_AUTHORITY_CLASSES for item in authority_classes):
+        authority_requirement_met = False
     return {
         "authority_requirement_met": authority_requirement_met,
         "corroboration_requirement_met": len(authority_ids)
@@ -1003,6 +1033,14 @@ class CharterLock(gl.contract.Contract):
         case = self._get_case(case_id)
         if case.get("state") not in (CASE_OPEN, CASE_CHALLENGEABLE):
             _fail("INVALID_CASE_TRANSITION")
+        now = _now_seconds()
+        if case.get("state") == CASE_OPEN and now > int(case["evidence_deadline"]):
+            _fail("EVIDENCE_SUBMISSION_WINDOW_CLOSED")
+        if (
+            case.get("state") == CASE_CHALLENGEABLE
+            and now > int(case.get("challenge_deadline", 0))
+        ):
+            _fail("CHALLENGE_WINDOW_CLOSED")
         if int(case["evidence_count"]) >= MAX_EVIDENCE_PER_CASE:
             _fail("EVIDENCE_LIMIT")
         charter = self._get_charter(str(case["charter_id"]))
@@ -1035,11 +1073,8 @@ class CharterLock(gl.contract.Contract):
         fingerprint_value = {
             "case_id": case_id,
             "authority_key": authority_key,
-            "normalized_url": normalized["normalized_url"],
             "content_sha256": digest,
             "content_byte_length": byte_length,
-            "observed_at": observed,
-            "published_at": published,
         }
         fingerprint = "0x" + hashlib.sha256(
             _canonical(fingerprint_value).encode("utf-8")
@@ -1108,7 +1143,13 @@ class CharterLock(gl.contract.Contract):
         )
 
     @gl.public.write
-    def challenge(self, case_id: str, challenge_ground: str, evidence_id: str) -> str:
+    def challenge(
+        self,
+        case_id: str,
+        challenge_ground: str,
+        evidence_id: str,
+        procedural_reason: str,
+    ) -> str:
         case = self._get_case(case_id)
         self._require_case_state(case, CASE_CHALLENGEABLE)
         if challenge_ground not in CHALLENGE_GROUNDS:
@@ -1119,6 +1160,8 @@ class CharterLock(gl.contract.Contract):
         if int(case["generation"]) >= max_generations:
             _fail("CHALLENGE_GENERATION_LIMIT")
         if challenge_ground == "NEW_ADMISSIBLE_EVIDENCE":
+            if procedural_reason != "":
+                _fail("NEW_EVIDENCE_CANNOT_ATTACH_PROCEDURAL_REASON")
             if evidence_id == "":
                 _fail("NEW_EVIDENCE_REQUIRED")
             evidence_raw = self.evidence_records.get(evidence_id)
@@ -1146,6 +1189,8 @@ class CharterLock(gl.contract.Contract):
         elif evidence_id != "":
             _fail("PROCEDURAL_CHALLENGE_CANNOT_ATTACH_EVIDENCE")
         else:
+            if procedural_reason not in PROCEDURAL_REASON_CODES:
+                _fail("INVALID_PROCEDURAL_REASON")
             new_root = str(case["evidence_root"])
         challenge_id, next_count = self._next_identifier("CHAL", self.challenge_count)
         self.challenge_count = next_count
@@ -1154,6 +1199,7 @@ class CharterLock(gl.contract.Contract):
             "case_id": case_id,
             "challenger": self._sender(),
             "challenge_ground": challenge_ground,
+            "procedural_reason": procedural_reason,
             "evidence_id": evidence_id,
             "previous_resolution_id": case["active_resolution_id"],
             "new_evidence_snapshot": new_root,
@@ -1299,6 +1345,7 @@ class CharterLock(gl.contract.Contract):
                 "MALFORMED_CONTENT",
                 "EVIDENCE_CONFLICT",
             ],
+            "procedural_challenge_reason_codes": list(PROCEDURAL_REASON_CODES),
             "no_privileged_override": True,
             "no_custody_or_betting": True,
             "charter_count": int(self.charter_count),

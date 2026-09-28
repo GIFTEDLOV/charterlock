@@ -88,7 +88,7 @@ function actionArgs(action: ProtocolAction): unknown[] {
     case "freeze_charter": case "open_case": return [action.charterId];
     case "seal_evidence": case "adjudicate": case "readjudicate": case "finalize_case": return [action.caseId];
     case "add_evidence": return [action.caseId, action.payload.authority_id, action.payload.source_url, action.payload.content_sha256, action.payload.content_byte_length, action.payload.observed_at, action.payload.published_at];
-    case "challenge": return [action.caseId, action.ground, action.evidenceId];
+    case "challenge": return [action.caseId, action.ground, action.evidenceId, action.proceduralReason];
   }
 }
 

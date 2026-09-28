@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from charterlock.semantic import validate_binary_event_result
+from charterlock.semantic import derive_canonical_state, validate_binary_event_result
 
 
 VALID_SHA = "a" * 64
@@ -209,7 +209,7 @@ def test_illegal_transitions_and_fail_closed_adjudication(direct_deploy):
     with pytest.raises(Exception):
         contract.adjudicate(case_id)
     with pytest.raises(Exception):
-        contract.challenge(case_id, "PROCEDURAL_VIOLATION", "")
+        contract.challenge(case_id, "PROCEDURAL_VIOLATION", "", "INVALID_STATE_TRANSITION")
     contract.seal_evidence(case_id)
     before = contract.get_case(case_id)
     with pytest.raises(Exception):
@@ -254,7 +254,7 @@ def test_semantic_output_exact_schema_and_consistency():
 
 def test_semantic_infrastructure_states_do_not_collapse_to_no():
     base = {
-        "selected_outcome": "SOURCE_UNAVAILABLE",
+        "selected_outcome": "INCONCLUSIVE",
         "event_occurred": False,
         "event_before_deadline": False,
         "confirmation_before_deadline": False,
@@ -263,4 +263,5 @@ def test_semantic_infrastructure_states_do_not_collapse_to_no():
         "evidence_conflict": False,
         "evidence_sufficient": False,
     }
-    assert validate_binary_event_result(json.dumps(base))["selected_outcome"] == "SOURCE_UNAVAILABLE"
+    assert validate_binary_event_result(json.dumps(base))["selected_outcome"] == "INCONCLUSIVE"
+    assert derive_canonical_state(base, ["SOURCE_UNAVAILABLE"]) == "SOURCE_UNAVAILABLE"

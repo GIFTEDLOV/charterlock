@@ -43,18 +43,28 @@ SEMANTIC_KEYS = frozenset(
         "evidence_sufficient",
     }
 )
-ALLOWED_SELECTED_OUTCOMES = frozenset(
-    {
-        "YES",
-        "NO",
-        "INCONCLUSIVE",
-        "INVALID_CHARTER",
-        "INSUFFICIENT_EVIDENCE",
-        "SOURCE_UNAVAILABLE",
-        "EVIDENCE_CONFLICT",
-    }
-)
+ALLOWED_SELECTED_OUTCOMES = PHASE2_OUTCOMES
 BOOL_KEYS = SEMANTIC_KEYS - {"selected_outcome"}
+
+
+def _strict_json_loads(raw: str) -> Any:
+    """Decode JSON without accepting duplicate keys or non-JSON constants."""
+
+    def unique_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        value: dict[str, Any] = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("duplicate JSON key")
+            value[key] = item
+        return value
+
+    return json.loads(
+        raw,
+        object_pairs_hook=unique_pairs,
+        parse_constant=lambda constant: (_ for _ in ()).throw(
+            ValueError(f"invalid JSON constant: {constant}")
+        ),
+    )
 
 
 def validate_binary_event_result(raw: str) -> dict[str, Any]:
@@ -63,7 +73,7 @@ def validate_binary_event_result(raw: str) -> dict[str, Any]:
     if not isinstance(raw, str) or len(raw.encode("utf-8")) > MAX_SEMANTIC_OUTPUT_BYTES:
         raise ValueError("oversized semantic output")
     try:
-        value = json.loads(raw)
+        value = _strict_json_loads(raw)
     except Exception as exc:
         raise ValueError("malformed semantic JSON") from exc
     if not isinstance(value, dict) or set(value.keys()) != set(SEMANTIC_KEYS):
@@ -86,12 +96,6 @@ def validate_binary_event_result(raw: str) -> dict[str, Any]:
             raise ValueError("YES is inconsistent with occurrence timing")
         if selected == "NO" and value["event_before_deadline"]:
             raise ValueError("NO is inconsistent with occurrence timing")
-    if selected == "INSUFFICIENT_EVIDENCE" and sufficient:
-        raise ValueError("insufficient-evidence state must be insufficient")
-    if selected == "SOURCE_UNAVAILABLE" and sufficient:
-        raise ValueError("source-unavailable state must be insufficient")
-    if selected == "EVIDENCE_CONFLICT" and not conflict:
-        raise ValueError("evidence-conflict state must mark conflict")
     return value
 
 
@@ -118,7 +122,7 @@ def validate_phase2_result(raw: str | dict[str, Any], temporal_semantics: str) -
         if len(raw.encode("utf-8")) > MAX_SEMANTIC_OUTPUT_BYTES:
             raise ValueError("oversized semantic output")
         try:
-            value = json.loads(raw)
+            value = _strict_json_loads(raw)
         except Exception as exc:
             raise ValueError("malformed semantic JSON") from exc
     else:

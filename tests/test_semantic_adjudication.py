@@ -395,7 +395,7 @@ def test_valid_new_evidence_challenge_preserves_lineage(direct_deploy, direct_vm
         1_700_000_000,
         1_700_000_000,
     )
-    challenge_id = contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", second_evidence)
+    challenge_id = contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", second_evidence, "")
     _mock_web(direct_vm, second_url, content=second_content)
     second = contract.readjudicate(case_id)
     history = contract.get_resolution_history(case_id)
@@ -414,10 +414,10 @@ def test_duplicate_evidence_challenge_and_closed_window_rejected(direct_deploy, 
     _mock_semantics(direct_vm, _vector())
     contract.adjudicate(case_id)
     with pytest.raises(Exception):
-        contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", evidence_id)
+        contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", evidence_id, "")
     direct_vm.warp("2035-01-01T00:00:00Z")
     with pytest.raises(Exception):
-        contract.challenge(case_id, "PROCEDURAL_VIOLATION", "")
+        contract.challenge(case_id, "PROCEDURAL_VIOLATION", "", "INVALID_STATE_TRANSITION")
 
 
 def test_challenge_generation_cap_is_enforced(direct_deploy, direct_vm):
@@ -437,7 +437,7 @@ def test_challenge_generation_cap_is_enforced(direct_deploy, direct_vm):
         1_700_000_000,
         1_700_000_000,
     )
-    contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", second_evidence)
+    contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", second_evidence, "")
     _mock_web(direct_vm, second_url, content=second_content)
     contract.readjudicate(case_id)
     third_url = "https://www.example.com/archive/event-3"
@@ -452,7 +452,7 @@ def test_challenge_generation_cap_is_enforced(direct_deploy, direct_vm):
         1_700_000_000,
     )
     with pytest.raises(Exception):
-        contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", third_evidence)
+        contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", third_evidence, "")
 
 
 def test_final_resolution_is_terminal_and_readable(direct_deploy, direct_vm):
@@ -476,7 +476,7 @@ def test_final_resolution_is_terminal_and_readable(direct_deploy, direct_vm):
             1_700_000_000,
         )
     with pytest.raises(Exception):
-        contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", evidence_id)
+        contract.challenge(case_id, "NEW_ADMISSIBLE_EVIDENCE", evidence_id, "")
 
 
 def test_validator_disagreement_is_detectable_in_controlled_direct_mode(direct_deploy, direct_vm):

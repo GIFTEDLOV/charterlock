@@ -1,4 +1,8 @@
-# CharterLock Phase 3 frontend provenance
+# CharterLock Phase 3 frontend provenance (historical)
+
+This file records the Phase 3 checkpoint and intentionally retains its
+historical contract hash. The current Phase 4 source hash is recorded in the
+frontend proof page and the Phase 4 provenance files.
 
 - Project: CharterLock Protocol
 - Schema: `BINARY_EVENT_V1`

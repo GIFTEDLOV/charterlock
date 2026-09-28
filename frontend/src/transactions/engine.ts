@@ -25,7 +25,7 @@ export async function executeTransaction(
     onEvent({ phase, message }); throw new Error(message, { cause: error });
   }
   onEvent({ phase: "BROADCAST", hash: submitted.hash });
-  const pending: PendingTransaction = { hash: submitted.hash, actionType: action.type, entityId, expectedPostcondition, createdAt: submitted.createdAt, chainId: config.chainId, contractAddress: config.contractAddress, phase: "HASH_PERSISTED" };
+  const pending: PendingTransaction = { hash: submitted.hash, action, actionType: action.type, entityId, expectedPostcondition, precondition, createdAt: submitted.createdAt, chainId: config.chainId, contractAddress: config.contractAddress, phase: "HASH_PERSISTED" };
   persistPendingTransaction(pending);
   onEvent({ phase: "HASH_PERSISTED", hash: submitted.hash });
   onEvent({ phase: "RECONCILING", hash: submitted.hash });
@@ -45,12 +45,22 @@ export async function executeTransaction(
 }
 
 export async function reconcilePersisted(adapter: ProtocolAdapter, onEvent: (event: TransactionEvent) => void = () => undefined): Promise<void> {
+  if (adapter.mode === "live") {
+    const network = await adapter.network();
+    if (!network.match) {
+      for (const pending of loadPendingTransactions()) updatePendingTransaction(pending.hash, { phase: "NETWORK_MISMATCH" });
+      onEvent({ phase: "NETWORK_MISMATCH", message: "Persisted writes are held until the configured Studio-dev network matches." });
+      return;
+    }
+  }
   for (const pending of loadPendingTransactions()) {
     onEvent({ phase: "RECONCILING", hash: pending.hash });
     try {
       const result = await adapter.reconcile(pending.hash);
       if (!result.finalized) continue;
       if (!result.executionSucceeded) { updatePendingTransaction(pending.hash, { phase: "FINALIZED_EXECUTION_FAILED" }); onEvent({ phase: "FINALIZED_EXECUTION_FAILED", hash: pending.hash }); continue; }
+      onEvent({ phase: "CANONICAL_READBACK", hash: pending.hash });
+      if (!await adapter.verifyPostcondition(pending.action, pending.precondition)) { updatePendingTransaction(pending.hash, { phase: "CANONICAL_POSTCONDITION_FAILED" }); onEvent({ phase: "CANONICAL_POSTCONDITION_FAILED", hash: pending.hash }); continue; }
       removePendingTransaction(pending.hash); onEvent({ phase: "CONFIRMED", hash: pending.hash });
     } catch { onEvent({ phase: "RPC_TIMEOUT", hash: pending.hash }); }
   }

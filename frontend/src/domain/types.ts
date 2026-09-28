@@ -1,6 +1,6 @@
 export const SCHEMA_VERSION = "BINARY_EVENT_V1" as const;
 export const CHAIN_ID = 61997 as const;
-export const CONTRACT_SOURCE_SHA256 = "7cbf394642bfc4a4d626888b0601c12c7d53568f99e51244a14632869083c0b1" as const;
+export const CONTRACT_SOURCE_SHA256 = "323fcf4a694d8b4070b043078b316055f090a643a6fdfb987afa5b9f2f7d3e45" as const;
 
 export type TemporalSemantics =
   | "OCCURRENCE_BY_DEADLINE"
@@ -207,7 +207,7 @@ export type ProtocolAction =
   | { type: "add_evidence"; caseId: string; payload: EvidenceDraft }
   | { type: "seal_evidence"; caseId: string }
   | { type: "adjudicate"; caseId: string }
-  | { type: "challenge"; caseId: string; ground: ChallengeGround; evidenceId: string }
+  | { type: "challenge"; caseId: string; ground: ChallengeGround; evidenceId: string; proceduralReason: string }
   | { type: "readjudicate"; caseId: string }
   | { type: "finalize_case"; caseId: string };
 
