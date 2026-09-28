@@ -1,0 +1,51 @@
+{
+  "network": "studio-dev",
+  "chain_id": 61997,
+  "rpc": "https://studio-dev.genlayer.com/api",
+  "git_head": "6d2a823e834e953bf42fba102aeb9487a9728d5c",
+  "contract_source_sha256": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
+  "contract_path": "contracts/charter_lock.py",
+  "deployer": "0x61f10cc252ed98ce7596c73fc557cca4cc600c82",
+  "deployment_tx_hash": "0x6a2f52cb7eb781b2e74fcc9cd73031e4633bffb591532d3f573ce960d305b721",
+  "broadcast_count": 1,
+  "broadcast_timestamp": "2026-09-28T22:02:39.331334+00:00",
+  "status": "FINALIZED",
+  "execution_result": "FINISHED_WITH_RETURN",
+  "contract_address": "0xa79C6437Aad95F5A487373d5e1673DC5bC301be8",
+  "final_status": "FINALIZED",
+  "hash_persistence": "Recovered via read-only sim_getTransactionsForAddress after the CLI wrapper failed to capture its output label; no rebroadcast occurred.",
+  "fee_value": "100000000000010352",
+  "contract_value": "0",
+  "fee_policy_source": "Studio-dev v0.6 getCurrentFeePolicy/read-only estimate",
+  "fee_estimate_source": "v0.6-compatible CLI/SDK deployment estimate",
+  "fee_consumed": "79066250001058",
+  "fee_refund": "99920933750009294",
+  "fee_distribution": {
+    "leaderTimeunitsAllocation": "100",
+    "validatorTimeunitsAllocation": "200",
+    "appealRounds": "0",
+    "executionBudgetPerRound": "25000000000000000",
+    "totalMessageFees": "0",
+    "rotations": ["3"],
+    "maxPriceGenPerTimeUnit": "2",
+    "storageFeeMaxGasPrice": "300000000",
+    "receiptFeeMaxGasPrice": "300000000"
+  },
+  "schema_method_count": 21,
+  "canonical_readback": {
+    "contract_info": "ok",
+    "get_charter_count": 0,
+    "get_case_count": 0
+  },
+  "source_parity_status": "VERIFIED",
+  "deployed_source_sha256": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
+  "deployed_source_bytes": 55739,
+  "fee_policy_enabled": true,
+  "toolchain": {
+    "genlayer_cli": "0.40.0-rc.3",
+    "genlayer_py": "0.19.0rc2",
+    "genlayer_test": "0.30.0rc2",
+    "genvm": "v0.6.0-rc2",
+    "genlayer_js": "2.0.0-rc.1"
+  }
+}

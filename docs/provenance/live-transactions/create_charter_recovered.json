@@ -1,0 +1,73 @@
+{
+  "label": "create_charter_recovered",
+  "network": "studio-dev",
+  "chain_id": 61997,
+  "rpc": "https://studio-dev.genlayer.com/api",
+  "contract_address": "0xa79C6437Aad95F5A487373d5e1673DC5bC301be8",
+  "method": "create_charter",
+  "args": [
+    "BINARY_EVENT_V1",
+    "Official GenLayer release documentation",
+    "Did an official GenLayer Labs repository publish documentation describing a GenLayer developer artifact by the event deadline?",
+    "[\"YES\",\"NO\"]",
+    1790719626,
+    1790806026,
+    "OFFICIAL_CONFIRMATION_BY_DEADLINE",
+    "REGISTERED_AUTHORITY_REQUIRED",
+    "BOUND_HOSTNAME_AND_PATH",
+    1,
+    "CONFLICT_INCONCLUSIVE",
+    "UNAVAILABLE_INCONCLUSIVE",
+    3600,
+    1
+  ],
+  "fee_estimate": {
+    "distribution": {
+      "leaderTimeunitsAllocation": "100",
+      "validatorTimeunitsAllocation": "200",
+      "appealRounds": "0",
+      "executionBudgetPerRound": "94631700000000",
+      "executionConsumed": "0",
+      "totalMessageFees": "0",
+      "rotations": [
+        "3"
+      ],
+      "maxPriceGenPerTimeUnit": "2",
+      "storageFeeMaxGasPrice": "300000000",
+      "receiptFeeMaxGasPrice": "300000000"
+    },
+    "feeValue": "378526800010352",
+    "policy": {
+      "enabled": true,
+      "genPerTimeUnit": "1",
+      "storageUnitPrice": "250000000",
+      "receiptGasPrice": "250000000",
+      "executionBudgetFloor": "76548000000000",
+      "timeUnitOverlayBps": "1500"
+    },
+    "observed": {
+      "executionFeeConsumed": "78635750000000",
+      "executionFeeReportTotal": "78628000000000",
+      "recommendedExecutionBudgetPerRound": "188716500000000",
+      "genvmMessageFeeConsumed": "0",
+      "messageFeeBudget": "0",
+      "messageFeeConsumed": "0",
+      "messageFeeRefunded": "0",
+      "internalDeclaredBudget": "0",
+      "externalMessageReserved": "0",
+      "externalMessageReimbursed": "0",
+      "externalMessageRemainder": "0",
+      "recommendedTotalMessageFees": "0"
+    }
+  },
+  "status": "FINALIZED",
+  "execution_result": "FINISHED_WITH_RETURN",
+  "final_status": "FINALIZED",
+  "return_value": "CHR-00000001",
+  "fee_consumed": "78643500000000",
+  "fee_refund": "299891050009529",
+  "broadcast_count": 1,
+  "transaction_hash": "0x632fa5a35ab95a1a3ce7043b547f977f84d0d9c2330ce9fc50eb7e3ff9f25b17",
+  "broadcast_timestamp": "2026-09-28T22:18:53.439Z",
+  "persisted_immediately": true
+}

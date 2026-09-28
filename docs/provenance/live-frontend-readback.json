@@ -1,0 +1,215 @@
+{
+  "official_studio_devnet": {
+    "id": 61997,
+    "rpc": "https://studio-dev.genlayer.com/api"
+  },
+  "contract_address": "0xa79C6437Aad95F5A487373d5e1673DC5bC301be8",
+  "contract_info": {
+    "business_outcomes": [
+      "YES",
+      "NO"
+    ],
+    "case_count": 1,
+    "charter_count": 1,
+    "evidence_count": 2,
+    "first_schema": "BINARY_EVENT_V1",
+    "no_custody_or_betting": true,
+    "no_privileged_override": true,
+    "phase": "PHASE_2_SEMANTIC_ADJUDICATION",
+    "procedural_challenge_reason_codes": [
+      "SEMANTIC_BOUNDARY_VIOLATION",
+      "EVIDENCE_ROOT_MISMATCH",
+      "AUTHORITY_BINDING_VIOLATION",
+      "INVALID_STATE_TRANSITION"
+    ],
+    "protocol": "CharterLock Protocol",
+    "protocol_version": "0.2.0-phase2",
+    "semantic_adjudicator_ready": true,
+    "technical_states": [
+      "INCONCLUSIVE",
+      "INVALID_CHARTER",
+      "INSUFFICIENT_EVIDENCE",
+      "SOURCE_UNAVAILABLE",
+      "FETCH_TIMEOUT",
+      "INVALID_RESPONSE",
+      "CONTENT_TOO_LARGE",
+      "DIGEST_MISMATCH",
+      "BYTE_LENGTH_MISMATCH",
+      "AUTHORITY_MISMATCH",
+      "MALFORMED_CONTENT",
+      "EVIDENCE_CONFLICT"
+    ]
+  },
+  "charter_count": 1,
+  "case_count": 1,
+  "charter": {
+    "allowed_outcomes": [
+      "YES",
+      "NO"
+    ],
+    "authority_ids": [
+      "official-studio",
+      "official-js"
+    ],
+    "authority_policy": "REGISTERED_AUTHORITY_REQUIRED",
+    "authority_snapshot": [
+      {
+        "active_at_freeze": true,
+        "authority_class": "OFFICIAL",
+        "authority_id": "official-studio",
+        "authority_key": "CHR-00000001::official-studio",
+        "charter_id": "CHR-00000001",
+        "hostname": "raw.githubusercontent.com",
+        "path_prefix": "/genlayerlabs/genlayer-studio",
+        "priority": 1,
+        "subject": "Official GenLayer Labs Studio repository"
+      },
+      {
+        "active_at_freeze": true,
+        "authority_class": "OFFICIAL",
+        "authority_id": "official-js",
+        "authority_key": "CHR-00000001::official-js",
+        "charter_id": "CHR-00000001",
+        "hostname": "raw.githubusercontent.com",
+        "path_prefix": "/genlayerlabs/genlayer-js",
+        "priority": 2,
+        "subject": "Official GenLayer Labs GenLayerJS repository"
+      }
+    ],
+    "challenge_window_seconds": 3600,
+    "charter_hash": "0x38e581ad7e9d2baae628c094fcb0a25ecd7e4d92d3f3dedb2bcaefa4e73f7e09",
+    "charter_id": "CHR-00000001",
+    "conflict_policy": "CONFLICT_INCONCLUSIVE",
+    "creator": "0x61F10Cc252eD98Ce7596c73fC557cCA4cc600c82",
+    "domain": "Official GenLayer release documentation",
+    "event_deadline": 1790719626,
+    "evidence_deadline": 1790806026,
+    "max_challenge_generations": 1,
+    "min_corroboration": 1,
+    "question": "Did an official GenLayer Labs repository publish documentation describing a GenLayer developer artifact by the event deadline?",
+    "schema_version": "BINARY_EVENT_V1",
+    "source_policy": "BOUND_HOSTNAME_AND_PATH",
+    "state": "FROZEN",
+    "temporal_semantics": "OFFICIAL_CONFIRMATION_BY_DEADLINE",
+    "unavailable_source_policy": "UNAVAILABLE_INCONCLUSIVE"
+  },
+  "case": {
+    "active_resolution_id": "RES-00000002",
+    "case_id": "CASE-00000001",
+    "challenge_count": 1,
+    "challenge_deadline": 1790638365,
+    "charter_hash": "0x38e581ad7e9d2baae628c094fcb0a25ecd7e4d92d3f3dedb2bcaefa4e73f7e09",
+    "charter_id": "CHR-00000001",
+    "creator": "0x61F10Cc252eD98Ce7596c73fC557cCA4cc600c82",
+    "evidence_count": 2,
+    "evidence_deadline": 1790806026,
+    "evidence_root": "0x4447dafda6993c57f71ec6a5de23d651a65d785097bc7ec5f57d16901388ee66",
+    "generation": 1,
+    "last_resolution_at": 1790634765,
+    "pending_challenge_id": "",
+    "pending_evidence_root": "",
+    "state": "CHALLENGEABLE",
+    "terminal": false
+  },
+  "evidence": [
+    {
+      "admissibility_state": "ADMISSIBLE",
+      "authority_id": "official-studio",
+      "authority_key": "CHR-00000001::official-studio",
+      "case_id": "CASE-00000001",
+      "content_byte_length": 3689,
+      "content_sha256": "d2496077087a1a272c53852c5834a32e33472d58be8a7a80cce6487ad5fe884d",
+      "evidence_generation": 0,
+      "evidence_id": "EVID-00000001",
+      "fingerprint": "0x865943e0f1fe696cd72f9ac0cf15f8430ba78be796f4487e5bad2eb7507ed6e1",
+      "normalized_hostname": "raw.githubusercontent.com",
+      "normalized_url": "https://raw.githubusercontent.com/genlayerlabs/genlayer-studio/c94072951e483510329670aa427fba3fa6944f45/README.md",
+      "observed_at": 1790634409,
+      "published_at": 0,
+      "source_url": "https://raw.githubusercontent.com/genlayerlabs/genlayer-studio/c94072951e483510329670aa427fba3fa6944f45/README.md"
+    },
+    {
+      "admissibility_state": "ADMISSIBLE",
+      "authority_id": "official-js",
+      "authority_key": "CHR-00000001::official-js",
+      "case_id": "CASE-00000001",
+      "content_byte_length": 14760,
+      "content_sha256": "51b6b9ec267e8f09d5378c5ca066c6a9e1e586744299746e1d6705e9aeead3eb",
+      "evidence_generation": 1,
+      "evidence_id": "EVID-00000002",
+      "fingerprint": "0xa9d061fe0187c68436e5014da0d111d1470d5673025dffd8d73f1c24207df93c",
+      "normalized_hostname": "raw.githubusercontent.com",
+      "normalized_url": "https://raw.githubusercontent.com/genlayerlabs/genlayer-js/1b7f50a3a3f2963ea857941b0fb386081dd5c326/README.md",
+      "observed_at": 1790634607,
+      "published_at": 0,
+      "source_url": "https://raw.githubusercontent.com/genlayerlabs/genlayer-js/1b7f50a3a3f2963ea857941b0fb386081dd5c326/README.md"
+    }
+  ],
+  "resolution_history": [
+    {
+      "adjudication_key": "0x3577a6b67a8761bd5a73ca495cee91ca97c9854c135a8d93bbcf8e4c4bac820a",
+      "business_outcome": "",
+      "canonical_state": "SOURCE_UNAVAILABLE",
+      "case_id": "CASE-00000001",
+      "challenge_deadline": 1790638156,
+      "challenge_id": "",
+      "charter_hash": "0x38e581ad7e9d2baae628c094fcb0a25ecd7e4d92d3f3dedb2bcaefa4e73f7e09",
+      "evidence_ids": [
+        "EVID-00000001"
+      ],
+      "evidence_root": "0x3dbf34ebd0fcd0feded66ef9d7d7e89aebe6feea809beb70bfd19054f638da5e",
+      "failure_causes": [
+        "SOURCE_UNAVAILABLE"
+      ],
+      "generation": 0,
+      "previous_resolution_id": "",
+      "resolution_id": "RES-00000001",
+      "resolved_at": 1790634556,
+      "schema_version": "BINARY_EVENT_V1",
+      "semantic_result": {
+        "authority_requirement_met": false,
+        "confirmation_before_deadline": false,
+        "corroboration_requirement_met": false,
+        "event_before_deadline": false,
+        "event_occurred": false,
+        "evidence_conflict": false,
+        "evidence_sufficient": false,
+        "selected_outcome": "INCONCLUSIVE"
+      },
+      "status": "SUPERSEDED"
+    },
+    {
+      "adjudication_key": "0x9b0606a055dabac427513c05f7c54f8934bd18108eb5d994662e039632c1ea29",
+      "business_outcome": "",
+      "canonical_state": "SOURCE_UNAVAILABLE",
+      "case_id": "CASE-00000001",
+      "challenge_deadline": 1790638365,
+      "challenge_id": "CHAL-00000001",
+      "charter_hash": "0x38e581ad7e9d2baae628c094fcb0a25ecd7e4d92d3f3dedb2bcaefa4e73f7e09",
+      "evidence_ids": [
+        "EVID-00000001",
+        "EVID-00000002"
+      ],
+      "evidence_root": "0x4447dafda6993c57f71ec6a5de23d651a65d785097bc7ec5f57d16901388ee66",
+      "failure_causes": [
+        "SOURCE_UNAVAILABLE"
+      ],
+      "generation": 1,
+      "previous_resolution_id": "RES-00000001",
+      "resolution_id": "RES-00000002",
+      "resolved_at": 1790634765,
+      "schema_version": "BINARY_EVENT_V1",
+      "semantic_result": {
+        "authority_requirement_met": false,
+        "confirmation_before_deadline": false,
+        "corroboration_requirement_met": false,
+        "event_before_deadline": false,
+        "event_occurred": false,
+        "evidence_conflict": false,
+        "evidence_sufficient": false,
+        "selected_outcome": "INCONCLUSIVE"
+      },
+      "status": "ACTIVE"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[
+  "BINARY_EVENT_V1",
+  "Official GenLayer release documentation",
+  "Did an official GenLayer Labs repository publish documentation describing a GenLayer developer artifact by the event deadline?",
+  "[\"YES\",\"NO\"]",
+  1790719626,
+  1790806026,
+  "OFFICIAL_CONFIRMATION_BY_DEADLINE",
+  "REGISTERED_AUTHORITY_REQUIRED",
+  "BOUND_HOSTNAME_AND_PATH",
+  1,
+  "CONFLICT_INCONCLUSIVE",
+  "UNAVAILABLE_INCONCLUSIVE",
+  3600,
+  1
+]

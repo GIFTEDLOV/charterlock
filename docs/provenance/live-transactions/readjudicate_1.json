@@ -1,0 +1,77 @@
+{
+  "label": "readjudicate_1",
+  "network": "studio-dev",
+  "chain_id": 61997,
+  "rpc": "https://studio-dev.genlayer.com/api",
+  "contract_address": "0xa79C6437Aad95F5A487373d5e1673DC5bC301be8",
+  "method": "readjudicate",
+  "args": [
+    "CASE-00000001"
+  ],
+  "fee_estimate": {
+    "distribution": {
+      "leaderTimeunitsAllocation": "100",
+      "validatorTimeunitsAllocation": "200",
+      "appealRounds": "0",
+      "executionBudgetPerRound": "95885400000000",
+      "executionConsumed": "0",
+      "totalMessageFees": "0",
+      "rotations": [
+        "3"
+      ],
+      "maxPriceGenPerTimeUnit": "2",
+      "storageFeeMaxGasPrice": "300000000",
+      "receiptFeeMaxGasPrice": "300000000"
+    },
+    "feeValue": "383541600010352",
+    "policy": {
+      "enabled": true,
+      "genPerTimeUnit": "1",
+      "storageUnitPrice": "250000000",
+      "receiptGasPrice": "250000000",
+      "executionBudgetFloor": "76548000000000",
+      "timeUnitOverlayBps": "1500"
+    },
+    "observed": {
+      "executionFeeConsumed": "79676500000000",
+      "executionFeeReportTotal": "79652000000000",
+      "recommendedExecutionBudgetPerRound": "191194200000000",
+      "genvmMessageFeeConsumed": "0",
+      "messageFeeBudget": "0",
+      "messageFeeConsumed": "0",
+      "messageFeeRefunded": "0",
+      "internalDeclaredBudget": "0",
+      "externalMessageReserved": "0",
+      "externalMessageReimbursed": "0",
+      "externalMessageRemainder": "0",
+      "recommendedTotalMessageFees": "0"
+    }
+  },
+  "status": "FINALIZED",
+  "broadcast_count": 1,
+  "transaction_hash": "0x521bed9bebe88f7a557fc64e4daa30696a57ec9da1d1db61970187c43688243a",
+  "broadcast_timestamp": "2026-09-28T22:32:39.221Z",
+  "persisted_immediately": true,
+  "final_status": "FINALIZED",
+  "execution_result": "FINISHED_WITH_RETURN",
+  "return_value": 1,
+  "fee_consumed": {
+    "executionConsumed": "79676500000000",
+    "storageFeeUsed": "24500000000",
+    "messageFeesConsumed": "0",
+    "messageFeesBudgetTotal": "0",
+    "leaderTimeunitsUsed": "1",
+    "validatorTimeunitsUsed": "4",
+    "perRound": [
+      {
+        "round": 0,
+        "consensusRound": "Accepted",
+        "leaderTimeunits": "1",
+        "validatorTimeunits": "4",
+        "maxValidatorTimeunits": "2"
+      }
+    ]
+  },
+  "reconciled_same_hash": true,
+  "reconciliation_timestamp": "2026-09-28T22:33:14.969Z"
+}

@@ -1,0 +1,183 @@
+{
+  "project": "CharterLock",
+  "release_kind": "Studio-dev live qualification",
+  "authorized_commit": "6d2a823e834e953bf42fba102aeb9487a9728d5c",
+  "git_head_used_for_deployment": "6d2a823e834e953bf42fba102aeb9487a9728d5c",
+  "contract": "contracts/charter_lock.py",
+  "contract_sha256_deploy_bytes": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
+  "contract_sha256_git_blob_bytes": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
+  "source_hash_policy": "docs/provenance/SOURCE_HASH_POLICY.md",
+  "schema": {
+    "public_method_count": 21,
+    "view_method_count": 11,
+    "write_method_count": 10
+  },
+  "network": "studio-dev",
+  "rpc": "https://studio-dev.genlayer.com/api",
+  "chain_id": 61997,
+  "deployer": "0x61f10cc252ed98ce7596c73fc557cca4cc600c82",
+  "balance_before_gen": "0.216017678799992758",
+  "balance_after_gen": "0.214992901049981824",
+  "nonce_latest_before": 68,
+  "nonce_pending_before": 68,
+  "nonce_after": 81,
+  "toolchain": {
+    "genlayer_cli": "0.40.0-rc.3",
+    "genlayer_py": "0.19.0rc2",
+    "genlayer_test": "0.30.0rc2",
+    "genvm": "v0.6.0-rc2",
+    "genlayer_js": "2.0.0-rc.1",
+    "python_executable": "C:\\Users\\DELL\\CharterLock\\.venv\\Scripts\\python.exe",
+    "official_studio_devnet_used": true
+  },
+  "deployment": {
+    "attempted": true,
+    "broadcast_count": 1,
+    "transaction_hash": "0x6a2f52cb7eb781b2e74fcc9cd73031e4633bffb591532d3f573ce960d305b721",
+    "persisted_before_polling": true,
+    "final_status": "FINALIZED",
+    "execution_result": "FINISHED_WITH_RETURN",
+    "contract_address": "0xa79C6437Aad95F5A487373d5e1673DC5bC301be8",
+    "source_parity_status": "VERIFIED",
+    "deployed_source_sha256": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
+    "fee_value": "100000000000010352",
+    "contract_value": "0",
+    "fee_consumed": "79066250001058",
+    "fee_refund": "99920933750009294",
+    "fee_policy": {
+      "enabled": true,
+      "leader_timeunits_allocation": "100",
+      "validator_timeunits_allocation": "200",
+      "appeal_rounds": "0",
+      "execution_budget_per_round": "25000000000000000",
+      "message_fees": "0",
+      "rotations": ["3"],
+      "max_price_gen_per_time_unit": "2",
+      "storage_fee_max_gas_price": "300000000",
+      "receipt_fee_max_gas_price": "300000000"
+    },
+    "initial_readback": {
+      "contract_info": true,
+      "get_charter_count": 0,
+      "get_case_count": 0,
+      "public_methods": 21
+    },
+    "failed_parser_diagnostic": {
+      "transaction_hash": "0x11bbba2de3330d53dc1783fdd2b7087496a171af1c224b19f6d1de114d58374c",
+      "final_status": "FINALIZED",
+      "execution_result": "FINISHED_WITH_ERROR",
+      "error": "INVALID_SCHEMA_VERSION",
+      "rebroadcast": false
+    }
+  },
+  "qualification": {
+    "fixture_document": "docs/provenance/LIVE_FIXTURE.md",
+    "fixtures": [
+      {
+        "url": "https://raw.githubusercontent.com/genlayerlabs/genlayer-studio/c94072951e483510329670aa427fba3fa6944f45/README.md",
+        "sha256": "d2496077087a1a272c53852c5834a32e33472d58be8a7a80cce6487ad5fe884d",
+        "bytes": 3689
+      },
+      {
+        "url": "https://raw.githubusercontent.com/genlayerlabs/genlayer-js/1b7f50a3a3f2963ea857941b0fb386081dd5c326/README.md",
+        "sha256": "51b6b9ec267e8f09d5378c5ca066c6a9e1e586744299746e1d6705e9aeead3eb",
+        "bytes": 14760
+      }
+    ],
+    "charter_id": "CHR-00000001",
+    "case_id": "CASE-00000001",
+    "evidence_root_generation_0": "0x3dbf34ebd0fcd0feded66ef9d7d7e89aebe6feea809beb70bfd19054f638da5e",
+    "evidence_root_generation_1": "0x4447dafda6993c57f71ec6a5de23d651a65d785097bc7ec5f57d16901388ee66",
+    "transactions": {
+      "create_charter": "0x632fa5a35ab95a1a3ce7043b547f977f84d0d9c2330ce9fc50eb7e3ff9f25b17",
+      "add_authority_official_studio": "0x6bda084ba2b94799e62cd92d1c36627d4351413a97d837f6fc887a0414abbe18",
+      "add_authority_official_js": "0x8ded5829ad4ba2dee0c5f3304cd29af8535b9629ee6ae113423b174c704ac797",
+      "freeze_charter": "0xd5bd90d452ef0a754133c5963ebfa939964a7fe826413cc6811a2902896daa62",
+      "open_case": "0x566095ab35436468b92ade516065b9c5c7eecea0fc0f027c6690cc239c15cfb7",
+      "add_evidence_1": "0xbe449ca8471462947a68e11efcd2d768c2969ddbf83546803492dee0d4de5af2",
+      "seal_evidence": "0x3c3ddca882183e876313b1f60ed9c45a4eaac5b9f0bca47d85db21f5c2a06305",
+      "adjudicate_generation_0": "0x506205c01234c729c4ed926659f4d9d0a64119a67e5d0f09f45082839ec7a28b",
+      "add_evidence_2": "0x6e5599278fea3164753a5fd090919571d71c3540cf54e14ac3523909788293e7",
+      "challenge": "0xcd000af1eb4b12159b9146b66ff1bbef351e63536c39c246fb07fc7ecf0c3905",
+      "readjudicate_generation_1": "0x521bed9bebe88f7a557fc64e4daa30696a57ec9da1d1db61970187c43688243a"
+    },
+    "resolution_generation_0": {
+      "resolution_id": "RES-00000001",
+      "status": "SUPERSEDED",
+      "canonical_state": "SOURCE_UNAVAILABLE",
+      "business_outcome": "",
+      "selected_outcome": "INCONCLUSIVE",
+      "failure_causes": ["SOURCE_UNAVAILABLE"],
+      "semantic_vector": {
+        "event_occurred": false,
+        "event_before_deadline": false,
+        "confirmation_before_deadline": false,
+        "authority_requirement_met": false,
+        "corroboration_requirement_met": false,
+        "evidence_conflict": false,
+        "evidence_sufficient": false
+      }
+    },
+    "resolution_generation_1": {
+      "resolution_id": "RES-00000002",
+      "status": "ACTIVE",
+      "generation": 1,
+      "previous_resolution_id": "RES-00000001",
+      "challenge_id": "CHAL-00000001",
+      "canonical_state": "SOURCE_UNAVAILABLE",
+      "business_outcome": "",
+      "selected_outcome": "INCONCLUSIVE",
+      "failure_causes": ["SOURCE_UNAVAILABLE"],
+      "semantic_vector": {
+        "event_occurred": false,
+        "event_before_deadline": false,
+        "confirmation_before_deadline": false,
+        "authority_requirement_met": false,
+        "corroboration_requirement_met": false,
+        "evidence_conflict": false,
+        "evidence_sufficient": false
+      }
+    },
+    "result_shopping_guard": "READ_ONLY_SIMULATION_REJECTED=CHARTERLOCK:INVALID_CASE_TRANSITION; BROADCAST=NO",
+    "failure_separation": "SOURCE_UNAVAILABLE remained distinct from business NO",
+    "challenge_proof": "COMPLETED",
+    "resolution_lineage_verified": true,
+    "finalize_transaction": null,
+    "final_case_state": "CHALLENGEABLE",
+    "terminal_state_verified": false
+  },
+  "frontend": {
+    "controlled_mode_preserved": true,
+    "live_reads": true,
+    "live_browser_smoke": true,
+    "live_browser_console_errors": 0,
+    "live_browser_core_horizontal_overflow": false,
+    "live_write": false,
+    "live_write_reason": "No browser wallet approval was available; direct SDK eth_sendTransaction is unsupported by this RPC",
+    "official_chain_config": "studioDevnet",
+    "readback_document": "docs/provenance/live-frontend-readback.json"
+  },
+  "tests": {
+    "python": "106/106 passed",
+    "mutation": "20/20 killed; 0 survived",
+    "python_compile": "PASS",
+    "pyright": "PASS; 0 errors, 0 warnings, 0 info",
+    "genvm_lint": "PASS",
+    "semantic_validation": "PASS",
+    "schema": "PASS; 21 methods, 11 views, 10 writes",
+    "frontend": "57/57 passed",
+    "typescript": "PASS",
+    "frontend_lint": "PASS",
+    "production_build": "PASS",
+    "playwright": "12/12 passed",
+    "secret_scan": "PASS"
+  },
+  "known_limitations": [
+    "The live validators returned SOURCE_UNAVAILABLE, so no business YES or NO is claimed.",
+    "The case remains CHALLENGEABLE while the challenge window is open; finalization was not attempted.",
+    "No browser-wallet live write was qualified.",
+    "The agent-browser executable was unavailable; the required browser smoke was performed with the installed Playwright fallback."
+  ],
+  "github_pushed": false,
+  "vercel_deployed": false
+}

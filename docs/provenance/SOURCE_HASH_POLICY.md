@@ -24,6 +24,14 @@ Both values must be calculated from the committed state. A clean worktree
 reproduction must produce the same deployment-byte hash before any release
 authorization.
 
+For the authorized candidate, the committed file contains 1,386 LF line
+feeds and zero CRLF pairs. The raw/LF deployment hash and the Git-blob-byte
+hash are both
+`70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a`.
+The diagnostic all-CRLF conversion hashes to
+`65662e279230537bbab340c54e0c1cd0024df9f30192a25ef67f27b90b7e6e4c`, proving
+that the authorized hash is not a line-ending-normalization alias.
+
 ## Historical discrepancy rule
 
 A previously reported hash is not authoritative unless it can be reproduced

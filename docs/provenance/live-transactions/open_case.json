@@ -1,0 +1,77 @@
+{
+  "label": "open_case",
+  "network": "studio-dev",
+  "chain_id": 61997,
+  "rpc": "https://studio-dev.genlayer.com/api",
+  "contract_address": "0xa79C6437Aad95F5A487373d5e1673DC5bC301be8",
+  "method": "open_case",
+  "args": [
+    "CHR-00000001"
+  ],
+  "fee_estimate": {
+    "distribution": {
+      "leaderTimeunitsAllocation": "100",
+      "validatorTimeunitsAllocation": "200",
+      "appealRounds": "0",
+      "executionBudgetPerRound": "94632300000000",
+      "executionConsumed": "0",
+      "totalMessageFees": "0",
+      "rotations": [
+        "3"
+      ],
+      "maxPriceGenPerTimeUnit": "2",
+      "storageFeeMaxGasPrice": "300000000",
+      "receiptFeeMaxGasPrice": "300000000"
+    },
+    "feeValue": "378529200010352",
+    "policy": {
+      "enabled": true,
+      "genPerTimeUnit": "1",
+      "storageUnitPrice": "250000000",
+      "receiptGasPrice": "250000000",
+      "executionBudgetFloor": "76548000000000",
+      "timeUnitOverlayBps": "1500"
+    },
+    "observed": {
+      "executionFeeConsumed": "78636250000000",
+      "executionFeeReportTotal": "78628000000000",
+      "recommendedExecutionBudgetPerRound": "188717100000000",
+      "genvmMessageFeeConsumed": "0",
+      "messageFeeBudget": "0",
+      "messageFeeConsumed": "0",
+      "messageFeeRefunded": "0",
+      "internalDeclaredBudget": "0",
+      "externalMessageReserved": "0",
+      "externalMessageReimbursed": "0",
+      "externalMessageRemainder": "0",
+      "recommendedTotalMessageFees": "0"
+    }
+  },
+  "status": "FINALIZED",
+  "broadcast_count": 1,
+  "transaction_hash": "0x566095ab35436468b92ade516065b9c5c7eecea0fc0f027c6690cc239c15cfb7",
+  "broadcast_timestamp": "2026-09-28T22:25:27.456Z",
+  "persisted_immediately": true,
+  "final_status": "FINALIZED",
+  "execution_result": "FINISHED_WITH_RETURN",
+  "return_value": 1,
+  "fee_consumed": {
+    "executionConsumed": "78636250000000",
+    "storageFeeUsed": "8250000000",
+    "messageFeesConsumed": "0",
+    "messageFeesBudgetTotal": "0",
+    "leaderTimeunitsUsed": "1",
+    "validatorTimeunitsUsed": "3",
+    "perRound": [
+      {
+        "round": 0,
+        "consensusRound": "Accepted",
+        "leaderTimeunits": "1",
+        "validatorTimeunits": "3",
+        "maxValidatorTimeunits": "1"
+      }
+    ]
+  },
+  "reconciled_same_hash": true,
+  "reconciliation_timestamp": "2026-09-28T22:26:01.306Z"
+}

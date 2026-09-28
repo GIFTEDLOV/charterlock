@@ -42,7 +42,7 @@ function AppShell() {
       <nav className="main-nav" aria-label="Workspace navigation">{nav.map(([href, label, icon]) => <NavLink key={href} to={href} className={({ isActive }) => isActive ? "active" : ""}><span>{icon}</span>{label}</NavLink>)}</nav>
       <div className="sidebar-label">Protocol</div>
       <nav className="main-nav" aria-label="Protocol navigation"><NavLink to="/proof" className={({ isActive }) => isActive ? "active" : ""}><span>⌁</span>Proof & provenance</NavLink><NavLink to="/integrate" className={({ isActive }) => isActive ? "active" : ""}><span>⌘</span>Integrate</NavLink><NavLink to="/docs" className={({ isActive }) => isActive ? "active" : ""}><span>?</span>Documentation</NavLink></nav>
-      <div className="sidebar-bottom"><div className="mini-label">Schema</div><div className="schema-chip">BINARY_EVENT_V1</div><div className="mini-label">Deployment</div><div className="muted">Not deployed · controlled proof</div></div>
+      <div className="sidebar-bottom"><div className="mini-label">Schema</div><div className="schema-chip">BINARY_EVENT_V1</div><div className="mini-label">Deployment</div><div className="muted">{config.mode === "live" && config.contractAddress ? "Studio-dev · live proof" : "Controlled · local proof"}</div></div>
     </aside>
     <main className="main-content">
       <div className="topbar"><div className="mobile-brand"><span className="brand-mark">C</span>CharterLock</div><div className="topbar-right"><span className={`network-dot ${network?.match ? "good" : ""}`}></span><span>{config.mode === "demo" ? "Controlled demo" : network?.match ? `Studio-dev · ${network.chainId}` : "Network not configured"}</span><Link className="topbar-link" to="/proof">Proof ↗</Link></div></div>
