@@ -11,12 +11,18 @@ reads and writes are canonical.
 
 See `ARCHITECTURE_LOCK.md`, `THREAT_MODEL.md`, and `BUILD_PLAN.md`.
 
+Phase 2 now includes the real GenLayer semantic boundary: authenticated
+evidence retrieval, an exact eight-field fact vector, custom semantic
+equivalence, deterministic temporal outcome derivation, typed infrastructure
+failures, one-shot resolution keys, and append-only challenge lineage.
+
 ## Local verification
 
 ```powershell
 $env:GENVM_VERSION = "v0.6.0-rc2"
 C:\Users\DELL\.beacon-v8-v06-rc2\Scripts\python.exe -m pytest tests
 C:\Users\DELL\.beacon-v8-v06-rc2\Scripts\genvm-lint.exe lint contracts\charter_lock.py
+C:\Users\DELL\.beacon-v8-v06-rc2\Scripts\genvm-lint.exe schema contracts\charter_lock.py
 ```
 
 No deployment, live blockchain write, GitHub push, or Vercel deployment is

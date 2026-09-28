@@ -1,6 +1,6 @@
 # CharterLock Protocol — Build Plan
 
-## Completed checkpoint: Phase 0 + Phase 1
+## Completed checkpoint: Phase 0 + Phase 1.5 + Phase 2
 
 - captured the local runtime/toolchain baseline
 - selected the cached Studio-dev v0.6 family (`v0.6.0-rc2`)
@@ -12,20 +12,21 @@
 - added explicit fail-closed adjudication/readjudication boundaries
 - added challenge and resolution lineage storage scaffolding
 - added direct GenLayer tests and semantic-output test fixtures
+- isolated the canonical repository from the preserved predecessor workspace
+- implemented bounded authenticated retrieval and typed infrastructure failures
+- implemented strict `BINARY_EVENT_V1` semantic validation and temporal derivation
+- implemented custom `run_nondet` equivalence with validator-independent retrieval
+- implemented one-shot adjudication keys, challenge generation, and lineage
+- added controlled direct-mode disagreement and prompt-injection tests
 
-## Phase 2 — semantic adjudication (operator review required)
+## Phase 2 implementation notes
 
-1. Implement authenticated bounded evidence retrieval with typed outcomes for
-   404, timeout, malformed response, digest mismatch, and unavailable source.
-2. Build the `BINARY_EVENT_V1` prompt from frozen charter fields and the sealed
-   evidence root; treat evidence bytes as untrusted data.
-3. Validate the exact bounded semantic result: eight keys, fixed types,
-   enumerations, size, and cross-field consistency.
-4. Use GenLayer consensus with custom semantic equivalence over stable fields;
-   validators independently evaluate admissible evidence.
-5. Persist only the bounded semantic result and deterministic consequence, not
-   arbitrary model prose.
-6. Complete challenge generation and finalization with preserved lineage.
+The Phase 2 boundary is implemented in `contracts/charter_lock.py`. The
+semantic helper in `src/charterlock/semantic.py` mirrors the consensus-critical
+schema for host-side tests and documentation; it is not an authority source.
+The previously fail-closed `adjudicate` and `readjudicate` boundaries now
+return canonical resolution IDs; the reviewer workflow and read APIs remain
+stable, and the checked-in schema records the return-type change.
 
 ## Phase 3 — verification and frontend (operator review required)
 

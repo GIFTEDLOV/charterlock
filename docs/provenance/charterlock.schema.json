@@ -85,7 +85,7 @@
       ],
       "kwparams": {},
       "readonly": false,
-      "ret": "null",
+      "ret": "string",
       "payable": false
     },
     "challenge": {
@@ -341,7 +341,7 @@
       ],
       "kwparams": {},
       "readonly": false,
-      "ret": "null",
+      "ret": "string",
       "payable": false
     },
     "seal_evidence": {

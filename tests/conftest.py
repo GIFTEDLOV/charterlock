@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -57,6 +58,20 @@ try:
     _direct_loader.import_calldata = _import_calldata_rc
     from gltest.direct import wasi_mock as _wasi_mock_compat
     _wasi_mock_compat.import_calldata = _import_calldata_rc
+
+    # genlayer-test 0.30.0rc2 auto-decodes JSON LLM mocks before returning
+    # them, while the matching v0.6 SDK's response_format="json" decoder
+    # expects the wire payload to still be a JSON string. Preserve the direct
+    # harness boundary without changing contract behavior.
+    _original_handle_llm_request = _wasi_mock_compat._handle_llm_request
+
+    def _handle_llm_request_rc(vm, data):
+        result = _original_handle_llm_request(vm, data)
+        if isinstance(result, dict) and isinstance(result.get("ok"), dict):
+            return {"ok": json.dumps(result["ok"], separators=(",", ":"))}
+        return result
+
+    _wasi_mock_compat._handle_llm_request = _handle_llm_request_rc
 except ImportError:
     pass
 
@@ -95,9 +110,9 @@ try:
         import importlib
         import sys as _sys
 
-        if "genlayer.gl" not in _sys.modules:
+        if "genlayer.message" not in _sys.modules:
             return _original_refresh_gl_message(self)
-        gl_module = importlib.import_module("genlayer.gl")
+        message_module = importlib.import_module("genlayer.message")
         try:
             types_module = importlib.import_module("genlayer.py.types")
         except ModuleNotFoundError:
@@ -117,21 +132,20 @@ try:
         sender = as_address(self.sender)
         origin = as_address(self.origin)
         contract_address = as_address(self._contract_address)
-        raw = dict(gl_module.message_raw)
-        raw["sender_address"] = sender
-        raw["origin_address"] = origin
-        raw["contract_address"] = contract_address
-        raw["value"] = self._value
-        raw["chain_id"] = self._chain_id
-        raw["datetime"] = self._datetime
-        gl_module.message_raw = raw
-        gl_module.message = gl_module.MessageType(
-            contract_address=contract_address,
-            sender_address=sender,
-            origin_address=origin,
-            value=u256(self._value),
-            chain_id=u256(self._chain_id),
+        raw = dict(getattr(message_module, "raw", {}))
+        raw.update(
+            {
+                "sender_address": sender,
+                "origin_address": origin,
+                "contract_address": contract_address,
+                "value": self._value,
+                "chain_id": self._chain_id,
+                "datetime": self._datetime,
+            }
         )
+        message_module.raw = raw
+        for key, value in raw.items():
+            setattr(message_module, key, value)
 
     _VMContext._refresh_gl_message = _refresh_gl_message_rc
 except ImportError:

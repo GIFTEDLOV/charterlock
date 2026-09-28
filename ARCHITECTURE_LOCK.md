@@ -1,6 +1,6 @@
 # CharterLock Protocol — Architecture Lock
 
-Status: frozen for Phase 0/1 review
+Status: frozen for Phase 2 review
 
 ## Non-negotiable trust problem
 
@@ -33,7 +33,7 @@ Validators never control IDs, addresses, payments, deadlines, authority
 definitions, allowed outcomes, challenge limits, lifecycle legality,
 administrative permissions, evidence identity, or settlement mechanics.
 
-## Phase 1 storage model
+## Canonical storage model
 
 The contract uses flat `TreeMap[str, str]` records containing canonical JSON.
 This keeps storage ABI evolution explicit and avoids coupling future semantic
@@ -45,7 +45,8 @@ fields to a nested storage layout.
   resolution pointer.
 - `evidence_records`: append-only evidence metadata, transport URL, normalized
   hostname, SHA-256, byte length, timestamps, and admissibility state.
-- `resolution_records`: future bounded semantic results and generation metadata.
+- `resolution_records`: bounded semantic facts, typed retrieval failures,
+  deterministic consequence, generation metadata, and lineage.
 - `challenge_records`: challenge grounds and lineage pointers.
 - `*_ids` arrays and history maps: stable enumeration and append-only readback.
 
@@ -60,10 +61,11 @@ Charter: `DRAFT -> FROZEN`.
 Case: `OPEN -> EVIDENCE_SEALED -> ADJUDICATED -> CHALLENGEABLE ->
 CHALLENGED -> READJUDICATED -> FINAL`.
 
-Phase 1 implements the deterministic transitions through evidence sealing and
-stores challenge/resolution scaffolding. `adjudicate`, `readjudicate`, and
-finalization fail closed until the Phase 2 semantic adjudicator is implemented;
-they do not manufacture `YES` or `NO`.
+Phase 2 implements authenticated bounded retrieval, strict semantic output
+validation, custom GenLayer equivalence, deterministic consequence derivation,
+challenge generations, and terminal finalization. Typed retrieval failures are
+persisted separately from `YES` and `NO`; no semantic failure is coerced into
+a business result.
 
 ## Public surface
 

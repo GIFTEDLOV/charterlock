@@ -225,7 +225,7 @@ def test_public_read_api_and_contract_info(direct_deploy):
     info = contract.contract_info()
     assert info["protocol"] == "CharterLock Protocol"
     assert info["first_schema"] == "BINARY_EVENT_V1"
-    assert info["semantic_adjudicator_ready"] is False
+    assert info["semantic_adjudicator_ready"] is True
     assert contract.get_case_ids() == []
     assert contract.get_charter(charter_id)["schema_version"] == "BINARY_EVENT_V1"
 
