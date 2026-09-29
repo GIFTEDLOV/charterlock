@@ -3,141 +3,17 @@ import { Link, NavLink, Outlet, Route, Routes, useLocation } from "react-router-
 import { adapter } from "../contract";
 import { config } from "../config";
 import { reconcilePersisted } from "../transactions/engine";
-import {
-  ActivityPage,
-  AppDashboard,
-  CaseCenterPage,
-  CaseChallengePage,
-  CaseEvidencePage,
-  CaseResolutionPage,
-  CasesPage,
-  CharterDetailPage,
-  CharterNewPage,
-  ChartersPage,
-  DocsPage,
-  IntegratePage,
-  LandingPage,
-  ProofPage,
-} from "./pages";
+import { ActivityPage, AppDashboard, CaseCenterPage, CaseChallengeV2Page, CaseEvidenceV2Page, CaseResolutionPage, CasesPage, CharterDetailV2Page, CharterNewV2Page, ChartersPage, DocsPage, IntegratePage, LandingPage, ProofPageV2 } from "./pages";
 
-const workspaceNav = [
-  ["/app", "Overview", "⌂"],
-  ["/charters", "Charters", "◇"],
-  ["/cases", "Cases", "◈"],
-  ["/activity", "Activity", "↗"],
-] as const;
+const groups = [{ label: "Protocol", items: [["Overview", "/app", "⌂"], ["Charters", "/charters", "◇"], ["Cases", "/cases", "◫"], ["Activity", "/activity", "≡"]] }, { label: "Verification", items: [["Proof", "/proof", "◈"], ["Integrate", "/integrate", "⌘"], ["Docs", "/docs", "?/"]] }];
 
-const verificationNav = [
-  ["/proof", "Proof", "✓"],
-  ["/integrate", "Integrate", "⌘"],
-  ["/docs", "Docs", "?"],
-] as const;
-
-export default function App() {
-  return (
-    <Routes>
-      <Route element={<AppShell />}>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/app" element={<AppDashboard />} />
-        <Route path="/charters" element={<ChartersPage />} />
-        <Route path="/charters/new" element={<CharterNewPage />} />
-        <Route path="/charters/:charterId" element={<CharterDetailPage />} />
-        <Route path="/cases" element={<CasesPage />} />
-        <Route path="/cases/:caseId" element={<CaseCenterPage />} />
-        <Route path="/cases/:caseId/evidence" element={<CaseEvidencePage />} />
-        <Route path="/cases/:caseId/resolution" element={<CaseResolutionPage />} />
-        <Route path="/cases/:caseId/challenge" element={<CaseChallengePage />} />
-        <Route path="/activity" element={<ActivityPage />} />
-        <Route path="/proof" element={<ProofPage />} />
-        <Route path="/integrate" element={<IntegratePage />} />
-        <Route path="/docs" element={<DocsPage />} />
-      </Route>
-    </Routes>
-  );
-}
-
-function AppShell() {
+function Shell() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [network, setNetwork] = useState<{ chainId: number; match: boolean; configured: boolean } | null>(null);
-
-  useEffect(() => {
-    void reconcilePersisted(adapter);
-  }, []);
-
-  useEffect(() => {
-    void adapter.network().then(setNetwork).catch(() => setNetwork(null));
-  }, [location.key]);
-
-  const live = config.mode === "live" && Boolean(config.contractAddress);
-  const networkLabel = config.mode === "demo"
-    ? "Controlled mode"
-    : network?.match
-      ? `Studio-dev · ${network.chainId}`
-        : network?.chainId === -1 ? "Wallet not connected" : network?.chainId ? "Wallet network mismatch" : "Studio-dev configured";
-
-  return (
-    <div className={`app-shell ${collapsed ? "sidebar-collapsed" : ""}`}>
-      <aside className="sidebar" aria-label="Primary navigation">
-        <div className="sidebar-top">
-          <Link to="/" className="brand" aria-label="CharterLock home">
-            <span className="brand-mark">C</span>
-            <span className="brand-copy">CharterLock<small>evidence protocol</small></span>
-          </Link>
-          <button className="sidebar-toggle" type="button" onClick={() => setCollapsed((value) => !value)} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} aria-expanded={!collapsed}>
-            <span>{collapsed ? "»" : "«"}</span>
-          </button>
-        </div>
-
-        <nav className="nav-group" aria-label="Workspace">
-          <div className="nav-heading">Workspace</div>
-          {workspaceNav.map(([href, label, icon]) => <NavItem key={href} href={href} label={label} icon={icon} />)}
-        </nav>
-        <nav className="nav-group" aria-label="Verification">
-          <div className="nav-heading">Verification</div>
-          {verificationNav.map(([href, label, icon]) => <NavItem key={href} href={href} label={label} icon={icon} />)}
-        </nav>
-
-        <div className="sidebar-footer">
-          <div className="network-summary">
-            <span className={`network-dot ${network?.match ? "good" : config.mode === "demo" ? "controlled" : ""}`}></span>
-            <span className="network-copy"><strong>{networkLabel}</strong><small>{live ? "Live canonical reads" : "Local fixtures only"}</small></span>
-          </div>
-          <div className="mode-lockup"><span className={`mode-dot ${live ? "live" : "controlled"}`}></span><span>{live ? "LIVE" : "CONTROLLED"}</span><code>{config.chainId}</code></div>
-        </div>
-      </aside>
-
-      <main className="main-content">
-        <header className="topbar">
-          <div className="mobile-brand"><span className="brand-mark">C</span><span>CharterLock</span></div>
-          <div className="topbar-location"><span className="topbar-kicker">Workspace</span><span className="topbar-separator">/</span><span>{locationLabel(location.pathname)}</span></div>
-          <div className="topbar-right"><span className={`network-dot ${network?.match ? "good" : config.mode === "demo" ? "controlled" : ""}`}></span><span>{networkLabel}</span><Link className="topbar-link" to="/proof">Proof <span aria-hidden="true">↗</span></Link></div>
-        </header>
-        {config.mode === "demo" && <div className="mode-banner controlled-banner"><strong>CONTROLLED DEMO / TEST MODE</strong><span>Local fixtures only. No wallet, live contract, or blockchain write is represented.</span></div>}
-        {config.mode === "live" && !network?.configured && <div className="mode-banner warning-banner"><strong>LIVE ADAPTER NOT CONFIGURED</strong><span>Add an explicit Studio-dev contract address before enabling writes.</span></div>}
-          {config.mode === "live" && network && !network.match && <div className="mode-banner warning-banner"><strong>{network.chainId === -1 ? "WALLET CONNECTION REQUIRED" : "NETWORK GUARD ACTIVE"}</strong><span>{network.chainId === -1 ? "Read-only live state is available; connect a Studio-dev wallet before signing." : "Writes are blocked until chain 61997 and the configured contract match."}</span></div>}
-        <Outlet />
-      </main>
-
-      <nav className="mobile-nav" aria-label="Mobile navigation">
-        {workspaceNav.slice(0, 4).map(([href, label, icon]) => <NavItem key={href} href={href} label={label} icon={icon} />)}
-      </nav>
-    </div>
-  );
+  useEffect(() => { void reconcilePersisted(adapter); }, []);
+  const live = config.mode === "live";
+  const title = location.pathname === "/" || location.pathname === "/app" ? "Overview" : location.pathname.split("/").filter(Boolean).map((part) => part.replaceAll("-", " ")).join(" / ") || "Overview";
+  return <div className={`app-shell ${collapsed ? "sidebar-collapsed" : ""}`}><aside className="sidebar"><div className="sidebar-top"><Link className="brand" to="/"><span className="brand-mark">C</span><span className="brand-copy"><strong>CharterLock</strong><small>protocol console</small></span></Link><button className="sidebar-toggle" type="button" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}>{collapsed ? "→" : "←"}</button></div><nav className="sidebar-nav" aria-label="Primary navigation">{groups.map((group) => <div className="nav-group" key={group.label}><div className="nav-heading">{group.label}</div>{group.items.map(([label, href, icon]) => <NavLink className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`} to={href} key={href}><span className="nav-icon" aria-hidden="true">{icon}</span><span>{label}</span></NavLink>)}</div>)}</nav><div className="sidebar-footer"><div className="network-summary"><i className={`network-dot ${live ? "live" : "demo"}`}></i><div><strong>{live ? "Studio-dev" : "Controlled mode"}</strong><small>{live ? "Chain 61997" : "Fixture state"}</small></div></div><div className="mode-lockup"><span>{live ? "LIVE" : "CONTROLLED"}</span><small>v1.0.0</small></div></div></aside><div className="shell-body"><header className="topbar"><div className="topbar-location"><span className="mobile-brand">CL</span><span className="location-root">CharterLock</span><span aria-hidden="true">/</span><strong>{title}</strong></div><div className="topbar-right"><span className={`mode-label ${live ? "live" : "controlled"}`}><i></i>{live ? "LIVE" : "CONTROLLED"}</span><span className="network-label">Studio-dev · 61997</span><Link className="topbar-link" to="/proof">Proof</Link></div></header><div className="mode-banner"><span>{live ? "LIVE canonical adapter" : "CONTROLLED DEMO / TEST MODE"}</span><span>{live ? "Reads reflect the deployed contract" : "Fixture state is intentionally separate from live protocol truth"}</span></div><main className="main-content"><Outlet /></main><nav className="mobile-nav" aria-label="Mobile navigation">{groups.flatMap((group) => group.items.slice(0, 4)).map(([label, href, icon]) => <NavLink className={({ isActive }) => isActive ? "active" : ""} to={href} key={href}><span>{icon}</span><small>{label}</small></NavLink>)}</nav></div></div>;
 }
 
-function NavItem({ href, label, icon }: { href: string; label: string; icon: string }) {
-  return <NavLink to={href} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><span className="nav-icon" aria-hidden="true">{icon}</span><span className="nav-label">{label}</span></NavLink>;
-}
-
-function locationLabel(pathname: string) {
-  if (pathname === "/" || pathname === "/app") return "Overview";
-  if (pathname.startsWith("/charters/new")) return "Charters / New charter";
-  if (pathname.startsWith("/charters/")) return `Charters / ${pathname.split("/")[2]}`;
-  if (pathname === "/charters") return "Charters";
-  if (pathname.startsWith("/cases/")) {
-    const parts = pathname.split("/").filter(Boolean);
-    return `Cases / ${parts[1]}${parts[2] ? ` / ${parts[2]}` : ""}`;
-  }
-  return pathname.slice(1).replaceAll("/", " / ") || "Overview";
-}
+export default function App() { return <Routes><Route element={<Shell />}><Route path="/" element={<LandingPage />} /><Route path="/app" element={<AppDashboard />} /><Route path="/charters" element={<ChartersPage />} /><Route path="/charters/new" element={<CharterNewV2Page />} /><Route path="/charters/:id" element={<CharterDetailV2Page />} /><Route path="/cases" element={<CasesPage />} /><Route path="/cases/:id" element={<CaseCenterPage />} /><Route path="/cases/:id/evidence" element={<CaseEvidenceV2Page />} /><Route path="/cases/:id/resolution" element={<CaseResolutionPage />} /><Route path="/cases/:id/challenge" element={<CaseChallengeV2Page />} /><Route path="/activity" element={<ActivityPage />} /><Route path="/proof" element={<ProofPageV2 />} /><Route path="/integrate" element={<IntegratePage />} /><Route path="/docs" element={<DocsPage />} /></Route></Routes>; }
