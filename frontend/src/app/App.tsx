@@ -1,19 +1,44 @@
-import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { adapter } from "../contract";
-import { config } from "../config";
-import { reconcilePersisted } from "../transactions/engine";
-import { ActivityPage, AppDashboard, CaseCenterPage, CaseChallengeV2Page, CaseEvidenceV2Page, CaseResolutionPage, CasesPage, CharterDetailV2Page, CharterNewV2Page, ChartersPage, DocsPage, IntegratePage, LandingPage, ProofPageV2 } from "./pages";
+import { lazy, Suspense, type ReactNode } from "react";
+import { Route, Routes } from "react-router-dom";
+import { AppLayout, DocsLayout, PublicLayout } from "./layouts";
 
-const groups = [{ label: "Protocol", items: [["Overview", "/app", "⌂"], ["Charters", "/charters", "◇"], ["Cases", "/cases", "◫"], ["Activity", "/activity", "≡"]] }, { label: "Verification", items: [["Proof", "/proof", "◈"], ["Integrate", "/integrate", "⌘"], ["Docs", "/docs", "?/"]] }];
+const LandingRoute = lazy(() => import("./v2/public").then((module) => ({ default: module.LandingRoute })));
+const ProofRoute = lazy(() => import("./v2/public").then((module) => ({ default: module.ProofRoute })));
+const IntegrateRoute = lazy(() => import("./v2/public").then((module) => ({ default: module.IntegrateRoute })));
+const DocsRoute = lazy(() => import("./v2/docs").then((module) => ({ default: module.DocsRoute })));
+const OverviewRoute = lazy(() => import("./v2/overview").then((module) => ({ default: module.OverviewRoute })));
+const ChartersRoute = lazy(() => import("./v2/charters-fixed").then((module) => ({ default: module.ChartersRoute })));
+const CharterNewRoute = lazy(() => import("./v2/charters-fixed").then((module) => ({ default: module.CharterNewRoute })));
+const CharterDetailRoute = lazy(() => import("./v2/charters-fixed").then((module) => ({ default: module.CharterDetailRoute })));
+const CasesRoute = lazy(() => import("./v2/cases").then((module) => ({ default: module.CasesRoute })));
+const CaseCenterRoute = lazy(() => import("./v2/cases").then((module) => ({ default: module.CaseCenterRoute })));
+const CaseEvidenceRoute = lazy(() => import("./v2/cases").then((module) => ({ default: module.CaseEvidenceRoute })));
+const CaseResolutionRoute = lazy(() => import("./v2/cases").then((module) => ({ default: module.CaseResolutionRoute })));
+const CaseChallengeRoute = lazy(() => import("./v2/cases").then((module) => ({ default: module.CaseChallengeRoute })));
+const ActivityRoute = lazy(() => import("./v2/activity").then((module) => ({ default: module.ActivityRoute })));
 
-function Shell() {
-  const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
-  useEffect(() => { void reconcilePersisted(adapter); }, []);
-  const live = config.mode === "live";
-  const title = location.pathname === "/" || location.pathname === "/app" ? "Overview" : location.pathname.split("/").filter(Boolean).map((part) => part.replaceAll("-", " ")).join(" / ") || "Overview";
-  return <div className={`app-shell ${collapsed ? "sidebar-collapsed" : ""}`}><aside className="sidebar"><div className="sidebar-top"><Link className="brand" to="/"><span className="brand-mark">C</span><span className="brand-copy"><strong>CharterLock</strong><small>protocol console</small></span></Link><button className="sidebar-toggle" type="button" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}>{collapsed ? "→" : "←"}</button></div><nav className="sidebar-nav" aria-label="Primary navigation">{groups.map((group) => <div className="nav-group" key={group.label}><div className="nav-heading">{group.label}</div>{group.items.map(([label, href, icon]) => <NavLink className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`} to={href} key={href}><span className="nav-icon" aria-hidden="true">{icon}</span><span>{label}</span></NavLink>)}</div>)}</nav><div className="sidebar-footer"><div className="network-summary"><i className={`network-dot ${live ? "live" : "demo"}`}></i><div><strong>{live ? "Studio-dev" : "Controlled mode"}</strong><small>{live ? "Chain 61997" : "Fixture state"}</small></div></div><div className="mode-lockup"><span>{live ? "LIVE" : "CONTROLLED"}</span><small>v1.0.0</small></div></div></aside><div className="shell-body"><header className="topbar"><div className="topbar-location"><span className="mobile-brand">CL</span><span className="location-root">CharterLock</span><span aria-hidden="true">/</span><strong>{title}</strong></div><div className="topbar-right"><span className={`mode-label ${live ? "live" : "controlled"}`}><i></i>{live ? "LIVE" : "CONTROLLED"}</span><span className="network-label">Studio-dev · 61997</span><Link className="topbar-link" to="/proof">Proof</Link></div></header><div className="mode-banner"><span>{live ? "LIVE canonical adapter" : "CONTROLLED DEMO / TEST MODE"}</span><span>{live ? "Reads reflect the deployed contract" : "Fixture state is intentionally separate from live protocol truth"}</span></div><main className="main-content"><Outlet /></main><nav className="mobile-nav" aria-label="Mobile navigation">{groups.flatMap((group) => group.items.slice(0, 4)).map(([label, href, icon]) => <NavLink className={({ isActive }) => isActive ? "active" : ""} to={href} key={href}><span>{icon}</span><small>{label}</small></NavLink>)}</nav></div></div>;
+function RouteFallback() { return <div className="route-fallback" role="status"><span className="skeleton-line wide"></span><span className="skeleton-line"></span><span className="skeleton-block"></span></div>; }
+function Lazy({ children }: { children: ReactNode }) { return <Suspense fallback={<RouteFallback />}>{children}</Suspense>; }
+
+export default function App() {
+  return <Routes>
+    <Route element={<PublicLayout />}>
+      <Route path="/" element={<Lazy><LandingRoute /></Lazy>} />
+      <Route path="/proof" element={<Lazy><ProofRoute /></Lazy>} />
+      <Route path="/integrate" element={<Lazy><IntegrateRoute /></Lazy>} />
+    </Route>
+    <Route element={<DocsLayout />}><Route path="/docs" element={<Lazy><DocsRoute /></Lazy>} /></Route>
+    <Route element={<AppLayout />}>
+      <Route path="/app" element={<Lazy><OverviewRoute /></Lazy>} />
+      <Route path="/charters" element={<Lazy><ChartersRoute /></Lazy>} />
+      <Route path="/charters/new" element={<Lazy><CharterNewRoute /></Lazy>} />
+      <Route path="/charters/:id" element={<Lazy><CharterDetailRoute /></Lazy>} />
+      <Route path="/cases" element={<Lazy><CasesRoute /></Lazy>} />
+      <Route path="/cases/:id" element={<Lazy><CaseCenterRoute /></Lazy>} />
+      <Route path="/cases/:id/evidence" element={<Lazy><CaseEvidenceRoute /></Lazy>} />
+      <Route path="/cases/:id/resolution" element={<Lazy><CaseResolutionRoute /></Lazy>} />
+      <Route path="/cases/:id/challenge" element={<Lazy><CaseChallengeRoute /></Lazy>} />
+      <Route path="/activity" element={<Lazy><ActivityRoute /></Lazy>} />
+    </Route>
+  </Routes>;
 }
-
-export default function App() { return <Routes><Route element={<Shell />}><Route path="/" element={<LandingPage />} /><Route path="/app" element={<AppDashboard />} /><Route path="/charters" element={<ChartersPage />} /><Route path="/charters/new" element={<CharterNewV2Page />} /><Route path="/charters/:id" element={<CharterDetailV2Page />} /><Route path="/cases" element={<CasesPage />} /><Route path="/cases/:id" element={<CaseCenterPage />} /><Route path="/cases/:id/evidence" element={<CaseEvidenceV2Page />} /><Route path="/cases/:id/resolution" element={<CaseResolutionPage />} /><Route path="/cases/:id/challenge" element={<CaseChallengeV2Page />} /><Route path="/activity" element={<ActivityPage />} /><Route path="/proof" element={<ProofPageV2 />} /><Route path="/integrate" element={<IntegratePage />} /><Route path="/docs" element={<DocsPage />} /></Route></Routes>; }

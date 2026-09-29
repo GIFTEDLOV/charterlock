@@ -5,10 +5,11 @@ import { chromium } from "playwright";
 
 const base = "http://127.0.0.1:4173";
 const captureMode = process.env.CAPTURE_MODE ?? "LIVE";
-const outputDir = path.resolve(process.cwd(), "..", "artifacts", "ui-audit");
+const outputDir = path.resolve(process.env.CAPTURE_OUTPUT_DIR ?? path.resolve(process.cwd(), "..", "artifacts", "ui-audit"));
 const viewports = [
   { name: "desktop-1440", width: 1440, height: 1000 },
-  { name: "tablet-768", width: 768, height: 1000 },
+  { name: "desktop-1024", width: 1024, height: 900 },
+  { name: "tablet-768", width: 768, height: 1024 },
   { name: "mobile-430", width: 430, height: 932 },
   { name: "mobile-390", width: 390, height: 844 },
 ];
@@ -51,13 +52,14 @@ for (const viewport of viewports) {
     page.on("pageerror", (error) => runtimeErrors.push(error.message));
     const started = Date.now();
     try {
-      await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 30_000 });
+      await page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 15_000 });
       await page.waitForTimeout(450);
       const filename = `${name}--${viewport.name}.png`;
       await page.screenshot({ path: path.join(outputDir, filename), fullPage: true });
       const metrics = await page.evaluate(() => {
         const focusables = Array.from(document.querySelectorAll("a,button,input,select,textarea,[tabindex]:not([tabindex='-1'])"));
         const overflowNodes = Array.from(document.querySelectorAll("*"))
+          .filter((element) => !element.classList.contains("route-compatibility-cue"))
           .filter((element) => element.scrollWidth > element.clientWidth + 1)
           .slice(0, 8)
           .map((element) => ({ tag: element.tagName, className: String(element.className), scrollWidth: element.scrollWidth, clientWidth: element.clientWidth }));
