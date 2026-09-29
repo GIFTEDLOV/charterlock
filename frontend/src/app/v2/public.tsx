@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, type ReactNode } from "react";
 import { adapter } from "../../contract";
-import { config, contractDisplayAddress } from "../../config";
+import { config, contractDisplayAddress, shouldShowControlledDemoLabel } from "../../config";
 import { SCHEMA_VERSION } from "../../domain/types";
 import { PUBLIC_METHODS } from "../../contract/abi";
 import { useData } from "../hooks";
@@ -9,7 +9,7 @@ import { Hash, StatusPill } from "../components";
 import { PageHeader, PropertyRows, SectionHeading } from "./shared";
 
 export function LandingRoute() {
-  return <div className="public-page landing-page"><section className="landing-hero public-width"><div className="landing-hero-copy"><div className="eyebrow">SEMANTIC SETTLEMENT INFRASTRUCTURE</div><h1>Freeze the <em>rules</em><br />before the outcome matters.</h1><p>CharterLock freezes interpretation rules, binds authority-qualified evidence, lets validators determine bounded facts, and derives the outcome deterministically.</p><div className="hero-actions"><Link className="button primary" to="/app">Launch CharterLock</Link><Link className="button secondary" to="/proof">Verify deployment</Link></div><div className="trust-strip"><span>Studio-dev · Chain 61997</span><span>Source verified</span><span>21 public methods</span><span>v1.0.0 live</span></div><span className="controlled-note">CONTROLLED DEMO / TEST MODE · live reads are separated from local fixtures</span></div><ProtocolSpecimen /></section><ProblemSection /><ProtocolFlow /><FirewallSection /><EvidencePipeline /><SemanticFirewall /><ChallengeLineage /><LiveProof /><section className="public-cta public-width"><div><span className="eyebrow">READY TO INSPECT THE PROTOCOL?</span><h2>Open the canonical console.</h2></div><Link className="button primary" to="/app">Open protocol <span>↗</span></Link></section></div>;
+  return <div className="public-page landing-page"><section className="landing-hero public-width"><div className="landing-hero-copy"><div className="eyebrow">SEMANTIC SETTLEMENT INFRASTRUCTURE</div><h1>Freeze the <em>rules</em><br />before the outcome matters.</h1><p>CharterLock freezes interpretation rules, binds authority-qualified evidence, lets validators determine bounded facts, and derives the outcome deterministically.</p><div className="hero-actions"><Link className="button primary" to="/app">Launch CharterLock</Link><Link className="button secondary" to="/proof">Verify deployment</Link></div><div className="trust-strip"><span>Studio-dev · Chain 61997</span><span>Source verified</span><span>21 public methods</span><span>Protocol v1.0.0</span><span>Interface v1.1</span></div>{shouldShowControlledDemoLabel(config.mode) && <span className="controlled-note">Controlled local preview · live reads are separated from fixtures</span>}</div><ProtocolSpecimen /></section><ProblemSection /><ProtocolFlow /><FirewallSection /><EvidencePipeline /><SemanticFirewall /><ChallengeLineage /><LiveProof /><section className="public-cta public-width"><div><span className="eyebrow">READY TO INSPECT THE PROTOCOL?</span><h2>Open the canonical console.</h2></div><Link className="button primary" to="/app">Open protocol <span>↗</span></Link></section></div>;
 }
 
 function ProtocolSpecimen() {

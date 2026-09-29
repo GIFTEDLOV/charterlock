@@ -20,3 +20,7 @@ export const isLiveConfigured = config.mode === "live" && Boolean(config.contrac
 export function contractDisplayAddress(mode: CharterLockMode, address?: string) {
   return address ?? (mode === "live" ? "LIVE_CONTRACT_NOT_CONFIGURED" : "CONTROLLED_DEMO_NO_ADDRESS");
 }
+
+export function shouldShowControlledDemoLabel(mode: CharterLockMode) {
+  return mode !== "live";
+}

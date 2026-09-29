@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 // Controlled proof suites intentionally use independent browser contexts per test.
   test("landing page explains the locked trust problem", async ({ page }) => {
     const errors: string[] = []; page.on("pageerror", (error) => errors.push(error.message)); page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
-    await page.goto("/"); await expect(page.getByRole("heading", { name: /Rules frozen/ })).toBeVisible(); await expect(page.getByText("CONTROLLED DEMO / TEST MODE")).toBeVisible(); expect(errors).toEqual([]);
+    await page.goto("/"); await expect(page.getByRole("heading", { name: /Freeze the rules/ })).toBeVisible(); await expect(page.getByText("Controlled local preview · live reads are separated from fixtures")).toBeVisible(); expect(errors).toEqual([]);
   });
 
   test("runs create → freeze → case → evidence → resolution → challenge → final", async ({ page }) => {
