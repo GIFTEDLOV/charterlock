@@ -2,6 +2,7 @@
 node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/.vercel/
 frontend/tsconfig*.tsbuildinfo
 frontend/vite.config.js
 frontend/vite.config.d.ts

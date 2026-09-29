@@ -1,5 +1,7 @@
 {
   "project": "CharterLock",
+  "repository": "https://github.com/GIFTEDLOV/charterlock",
+  "app_url": "https://charterlock.vercel.app",
   "release_kind": "Studio-dev live qualification",
   "authorized_commit": "6d2a823e834e953bf42fba102aeb9487a9728d5c",
   "git_head_used_for_deployment": "6d2a823e834e953bf42fba102aeb9487a9728d5c",
@@ -238,8 +240,8 @@
     "No browser-wallet live write was qualified.",
     "The agent-browser executable was unavailable; the required browser smoke was performed with the installed Playwright fallback."
   ],
-  "github_pushed": false,
-  "vercel_deployed": false,
+  "github_pushed": true,
+  "vercel_deployed": true,
   "phase6c": {
     "head": "6f259e7c932bfc44e10cb1b0432828c7fdcb98c6",
     "contract_unchanged": true,
@@ -265,5 +267,58 @@
     "release_readiness": "docs/provenance/RELEASE_READINESS.md",
     "github_ci": "NOT_RUN",
     "vercel": "NOT_DEPLOYED"
+  },
+  "phase7": {
+    "release_branch": "release/charterlock-v1",
+    "release_branch_sha_before_provenance": "db7eed5d9d676b40d3ef7b7da07cb973c2d769df",
+    "exact_head_ci": {
+      "run_id": "36563243348",
+      "url": "https://github.com/GIFTEDLOV/charterlock/actions/runs/36563243348",
+      "sha": "db7eed5d9d676b40d3ef7b7da07cb973c2d769df",
+      "result": "SUCCESS",
+      "jobs": ["contracts", "security", "frontend", "integration", "browser-e2e", "build/provenance"],
+      "native_genvm_typecheck": "NOT_AVAILABLE_MISSING_V06_RUNNER_CACHE"
+    },
+    "branch_protection": {
+      "default_branch": "main",
+      "enabled": true,
+      "required_checks": ["contracts", "security", "frontend", "integration", "browser-e2e", "build/provenance"],
+      "force_pushes": false,
+      "deletions": false,
+      "admin_enforcement": true
+    },
+    "candidate_vercel": {
+      "project": "charterlock",
+      "deployment_id": "dpl_5juTW4pV4aRAKxXymRfntqwNpY8r",
+      "url": "https://charterlock.vercel.app",
+      "ready_state": "READY",
+      "source_sha": "db7eed5d9d676b40d3ef7b7da07cb973c2d769df",
+      "git_sha_status": "NOT_EXPOSED_CLI_DEPLOYMENT"
+    },
+    "production_smoke": {
+      "http_route_checks": 56,
+      "http_failures": 0,
+      "targeted_browser_checks": 8,
+      "console_errors": 0,
+      "runtime_errors": 0,
+      "horizontal_overflow": 0,
+      "broad_sweep_rate_limit": true,
+      "artifacts_outside_git": "C:\\Users\\DELL\\CharterLock-production-smoke"
+    },
+    "existing_case_finalization": {
+      "case_id": "CASE-00000001",
+      "state": "CHALLENGEABLE",
+      "eligible": false,
+      "simulation": "CHARTERLOCK:CHALLENGE_WINDOW_OPEN",
+      "broadcast": false
+    },
+    "browser_wallet": {
+      "status": "PENDING_MANUAL",
+      "attempted": false,
+      "reason": "No browser-wallet surface is available in the Codex environment."
+    },
+    "business_verdict": "NOT_PROVEN",
+    "contract_source_unchanged": true,
+    "next_required": ["commit provenance/UI correction", "protected release PR", "merged-main exact-head CI", "final-main Vercel deploy", "final production smoke", "tag and GitHub Release"]
   }
 }

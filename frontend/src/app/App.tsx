@@ -74,7 +74,7 @@ function AppShell() {
     ? "Controlled mode"
     : network?.match
       ? `Studio-dev · ${network.chainId}`
-      : "Network not configured";
+        : network?.chainId === -1 ? "Wallet not connected" : network?.chainId ? "Wallet network mismatch" : "Studio-dev configured";
 
   return (
     <div className={`app-shell ${collapsed ? "sidebar-collapsed" : ""}`}>
@@ -115,7 +115,7 @@ function AppShell() {
         </header>
         {config.mode === "demo" && <div className="mode-banner controlled-banner"><strong>CONTROLLED DEMO / TEST MODE</strong><span>Local fixtures only. No wallet, live contract, or blockchain write is represented.</span></div>}
         {config.mode === "live" && !network?.configured && <div className="mode-banner warning-banner"><strong>LIVE ADAPTER NOT CONFIGURED</strong><span>Add an explicit Studio-dev contract address before enabling writes.</span></div>}
-        {config.mode === "live" && network && !network.match && <div className="mode-banner warning-banner"><strong>NETWORK GUARD ACTIVE</strong><span>Writes are blocked until chain 61997 and the configured contract match.</span></div>}
+          {config.mode === "live" && network && !network.match && <div className="mode-banner warning-banner"><strong>{network.chainId === -1 ? "WALLET CONNECTION REQUIRED" : "NETWORK GUARD ACTIVE"}</strong><span>{network.chainId === -1 ? "Read-only live state is available; connect a Studio-dev wallet before signing." : "Writes are blocked until chain 61997 and the configured contract match."}</span></div>}
         <Outlet />
       </main>
 

@@ -218,3 +218,35 @@ No new case or adjudication retry was performed. The operator-facing,
 read-only wallet diagnostic and the single bounded manual qualification guide
 are in `frontend/src/app/components.tsx` and
 `docs/provenance/BROWSER_WALLET_QUALIFICATION.md`.
+
+## Phase 7 release execution checkpoint
+
+The canonical public repository is
+`https://github.com/GIFTEDLOV/charterlock`. Its `main` branch is protected
+with required `contracts`, `security`, `frontend`, `integration`,
+`browser-e2e`, and `build/provenance` checks; force pushes and branch deletion
+are disabled.
+
+The candidate production deployment is Vercel project `charterlock`,
+deployment `dpl_5juTW4pV4aRAKxXymRfntqwNpY8r`, state `READY`, at
+`https://charterlock.vercel.app`. It was deployed from the exact green
+release-branch SHA `db7eed5d9d676b40d3ef7b7da07cb973c2d769df`; the CLI deploy
+does not expose a Vercel Git SHA, so Git linkage is not claimed.
+
+Production route HTTP checks covered all 14 routes at 1440, 768, 430, and
+390 widths: 56/56 returned HTTP 200. Targeted live browser checks for `/proof`
+and `/cases/CASE-00000001` at all four widths recorded zero console errors,
+zero page errors, and zero document-level horizontal overflow. A broader
+browser sweep was intentionally rate-limited by the public Studio-dev RPC
+(`429`); that observation is retained as an environment/rate-limit limitation,
+not hidden as a product pass.
+
+The UI now distinguishes configured Studio-dev read mode from an absent wallet:
+the production proof surface reports `Wallet not connected` rather than
+mislabeling the configured network as absent. No browser-wallet transaction was
+attempted because no injected wallet surface exists in the Codex environment.
+
+The existing `CASE-00000001` was not finalized. Its canonical precondition
+still returns `CHALLENGE_WINDOW_OPEN`, so no finalization transaction exists and
+terminal proof remains pending. No additional blockchain write or deployment
+was made during this release continuation.

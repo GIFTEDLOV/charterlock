@@ -6,8 +6,8 @@ without implementing betting, custody, odds, trading, liquidity, or tokens.
 
 The canonical workspace is `C:\Users\DELL\CharterLock`. The project keeps
 deterministic charter, authority, evidence, lifecycle, semantic, and
-provenance boundaries explicit. The frontend is deferred until the protocol
-reads and writes are canonical.
+provenance boundaries explicit. The frozen Studio-dev deployment is served by
+the production frontend at https://charterlock.vercel.app.
 
 See `ARCHITECTURE_LOCK.md`, `THREAT_MODEL.md`, `BUILD_PLAN.md`, and
 `frontend/README.md`. The Phase 4 frontend exposes the full reviewer-facing
@@ -29,6 +29,8 @@ C:\Users\DELL\.beacon-v8-v06-rc2\Scripts\genvm-lint.exe schema contracts\charter
 ```
 
 Phase 4 hardens the protocol and frontend through hostile red-team tests,
-state-machine checks, mutation checks, provenance audits, and read-only
-Studio-dev preflight. No deployment, live blockchain write, GitHub push, or
-Vercel deployment is performed by this checkpoint.
+state-machine checks, mutation checks, provenance audits, and Studio-dev
+qualification. The live contract is fixed at
+`0xa79C6437Aad95F5A487373d5e1673DC5bC301be8` on Studio-dev chain `61997`.
+The live validators reached consensus for the qualification case but returned
+typed `SOURCE_UNAVAILABLE`; no business `YES` or `NO` is claimed.
