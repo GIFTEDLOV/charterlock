@@ -80,6 +80,43 @@
       "required_environment": ["VITE_CHARTERLOCK_MODE=live", "VITE_CHARTERLOCK_RPC_URL=https://studio-dev.genlayer.com/api", "VITE_CHARTERLOCK_CONTRACT_ADDRESS=0xa79C6437Aad95F5A487373d5e1673DC5bC301be8"]
     }
   },
+  "phase7_release_checkpoint": {
+    "repository": "https://github.com/GIFTEDLOV/charterlock",
+    "default_branch": "main",
+    "main_sha": "db7eed5d9d676b40d3ef7b7da07cb973c2d769df",
+    "branch_protection": "ENABLED",
+    "exact_head_ci": {
+      "run_id": "36563243348",
+      "sha": "db7eed5d9d676b40d3ef7b7da07cb973c2d769df",
+      "result": "SUCCESS",
+      "jobs": ["contracts", "security", "frontend", "integration", "browser-e2e", "build/provenance"]
+    },
+    "candidate_vercel": {
+      "project": "charterlock",
+      "deployment_id": "dpl_5juTW4pV4aRAKxXymRfntqwNpY8r",
+      "url": "https://charterlock.vercel.app",
+      "state": "READY",
+      "source_sha": "db7eed5d9d676b40d3ef7b7da07cb973c2d769df"
+    },
+    "production_smoke": {
+      "http_checks": 56,
+      "http_failures": 0,
+      "targeted_browser_checks": 8,
+      "targeted_browser_console_errors": 0,
+      "targeted_browser_overflow": 0,
+      "broad_sweep_rate_limit": "Studio-dev RPC returned HTTP 429 after the burst; no Vercel runtime exception or overflow was observed"
+    },
+    "finalization": {
+      "case_id": "CASE-00000001",
+      "state": "CHALLENGEABLE",
+      "eligible": false,
+      "simulation": "CHARTERLOCK:CHALLENGE_WINDOW_OPEN",
+      "broadcast": false
+    },
+    "browser_wallet": "PENDING_MANUAL",
+    "business_verdict": "NOT_PROVEN",
+    "validator_web_availability": "PARTIAL_TARGET_ENVIRONMENT_LIMITATION"
+  },
   "items": [
     {"id":"repository-state","layer":"Repository state","status":"PASS","evidence":["master worktree was clean before Phase 6A","no remote configured","no ClearLC/ClearLock matches","reflog and outside forensic preservation retained"],"limitations":["closure files are uncommitted at capture time"],"next_action":"Verify clean status after the single closure commit."},
     {"id":"source-integrity","layer":"Source integrity","status":"PASS","evidence":["deployed, Git blob, clean-checkout and working-tree contract bytes match","source parity is VERIFIED","hash policy is explicit"],"limitations":["network source parity depends on deployed readback capability"],"next_action":"Recalculate the hash after future checkouts."},
@@ -95,12 +132,12 @@
     {"id":"fee-value","layer":"Fee / value","status":"PASS","evidence":["contract value separated from fee value","fee policy, allocations, consumption and refund recorded"],"limitations":["qualification fee detail is not duplicated in this audit"],"next_action":"Keep fee/value fields separate in UI and provenance."},
     {"id":"full-consensus","layer":"Full consensus","status":"PARTIAL","evidence":["live Studio-dev adjudication and readjudication executed","canonical generations and typed technical state read back"],"limitations":["LIVE CONSENSUS EXECUTED is proven; live business YES/NO is not"],"next_action":"Do not relabel technical unavailability as a business result."},
     {"id":"frontend-truth","layer":"Frontend truth","status":"PARTIAL","evidence":["live reads use deployed contract","transaction engine requires canonical readback","controlled/live modes are distinct","receipt is not final truth"],"limitations":["browser-wallet live write is pending"],"next_action":"Qualify one bounded wallet write in the next authorized phase."},
-    {"id":"browser","layer":"Browser","status":"PARTIAL","evidence":["14 routes x 1440/430/390 captured","controlled capture: zero console/runtime errors, zero document overflow, zero unlabeled inputs","Playwright 12/12"],"limitations":["broad live capture hit 30 requests/minute RPC rate limit","agent-browser unavailable; Playwright fallback used","new dedicated 768px screenshot not retained"],"next_action":"Run rate-limited live visual pass and add 768px capture."},
-    {"id":"exact-head-ci","layer":"Exact-head CI","status":"BLOCKED","evidence":["required jobs defined: contracts, security, frontend, integration, browser-e2e, build/provenance"],"limitations":["no GitHub remote/push and no exact-head CI run"],"next_action":"Run only in separately authorized release phase."},
+    {"id":"browser","layer":"Browser","status":"PARTIAL","evidence":["14 routes x 1440/768/430/390 returned HTTP 200","targeted production proof/case checks: zero console/runtime errors and zero document overflow","controlled capture: zero console/runtime errors, zero document overflow","Playwright 12/12"],"limitations":["broad live capture hit 30 requests/minute RPC rate limit","agent-browser executable unavailable; installed Playwright fallback used"],"next_action":"Repeat the same rate-limit-aware smoke on the final main deployment."},
+    {"id":"exact-head-ci","layer":"Exact-head CI","status":"PASS","evidence":["required jobs contracts, security, frontend, integration, browser-e2e, build/provenance passed at exact SHA db7eed5d9d676b40d3ef7b7da07cb973c2d769df","run 36563243348"],"limitations":["native v0.6 runner/cache artifact is unavailable; the contracts job records NOT_AVAILABLE rather than a false native pass"],"next_action":"Repeat required checks on the final merged main SHA."},
     {"id":"secret-provenance","layer":"Secret / provenance","status":"PASS","evidence":["secret scan passes","ignored env and wallet files are not tracked","manifest/proof/live identifiers agree"],"limitations":["ignored local environment is not portable secret storage"],"next_action":"Repeat scan before release."},
-    {"id":"vercel-release","layer":"Vercel release","status":"BLOCKED","evidence":["no Vercel deployment attempted"],"limitations":["no production URL, commit linkage or production smoke"],"next_action":"Perform after GitHub/release authorization."},
-    {"id":"protected-release","layer":"Protected release / tag","status":"BLOCKED","evidence":["no remote, protected branch, annotated tag or GitHub release created"],"limitations":["protection is external state"],"next_action":"Configure and verify protections before publishing."},
-    {"id":"submission-freeze","layer":"Submission / post-submission freeze","status":"BLOCKED","evidence":["live contract, deployment tx and source SHA are recorded"],"limitations":["production URL, explorer linkage and final release are absent"],"next_action":"Freeze consistency set after production proof."},
+    {"id":"vercel-release","layer":"Vercel release","status":"PARTIAL","evidence":["charterlock project created under the authenticated Vercel team","candidate deployment dpl_5juTW4pV4aRAKxXymRfntqwNpY8r READY","stable URL https://charterlock.vercel.app","production environment variables resolve to live Studio-dev configuration"],"limitations":["candidate was deployed from exact green pre-provenance SHA; final main deployment remains pending","Vercel Git commit linkage is not present for the CLI deployment"],"next_action":"Deploy exact final main SHA after protected merge and verify READY."},
+    {"id":"protected-release","layer":"Protected release / tag","status":"PARTIAL","evidence":["public repository GIFTEDLOV/charterlock","main protection enabled with six required checks, admin enforcement, linear history, conversation resolution, force pushes and deletions disabled"],"limitations":["release PR, merge, annotated tag and GitHub Release do not yet exist"],"next_action":"Complete the protected release PR and tag flow."},
+    {"id":"submission-freeze","layer":"Submission / post-submission freeze","status":"PARTIAL","evidence":["repository URL and candidate production URL are now fixed","live contract, deployment tx and source SHA remain recorded"],"limitations":["final main SHA, release URL and final Vercel deployment are not frozen","external submission portal is intentionally untouched"],"next_action":"Freeze the consistency set after final release deployment."},
     {"id":"appendix-before-live-write","layer":"Appendix A — BEFORE LIVE WRITE","status":"PASS","evidence":["source, hash, schema, toolchain, network, fee, secret and authorization gates are recorded"],"limitations":["this phase does not recreate signer evidence"],"next_action":"Preserve pre-write checkpoint for future deployments."},
     {"id":"appendix-after-broadcast","layer":"Appendix A — AFTER BROADCAST","status":"PASS","evidence":["deployment finalized with FINISHED_WITH_RETURN","no replacement deployment","canonical initial readback"],"limitations":["does not predict future transaction success"],"next_action":"Reconcile every future hash identically."},
     {"id":"appendix-reviewer-fix","layer":"Appendix A — BEFORE REVIEWER FIX COMPLETE","status":"PARTIAL","evidence":["source and local gates complete","audit/UI artifacts prepared"],"limitations":["exact-head CI, finalization, wallet write and production smoke remain open"],"next_action":"Close only listed future gates."},

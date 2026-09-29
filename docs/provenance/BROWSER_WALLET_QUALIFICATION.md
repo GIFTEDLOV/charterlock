@@ -8,6 +8,7 @@ wallet password.
 
 ## Locked target
 
+- Production frontend: `https://charterlock.vercel.app`
 - Mode: `LIVE`
 - Network: `Studio-dev`
 - Chain ID: `61997`

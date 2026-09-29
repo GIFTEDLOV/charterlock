@@ -86,6 +86,8 @@ export function LiveWalletDiagnostic() {
     ["Network", networkMatch ? "MATCHED" : wallet.chainId ? "MISMATCH" : "NOT READ", "Studio-dev"],
     ["Chain", wallet.chainId ? String(wallet.chainId) : "NOT READ", `Expected ${config.chainId}`],
     ["Contract", config.contractAddress ?? "NOT CONFIGURED", "Locked deployment target"],
+    ["Production app", config.productionUrl, "Current release target"],
+    ["Repository", config.repositoryUrl, "Canonical source"],
     ["Precondition", "PENDING MANUAL", "Canonical count read before signing"],
     ["Write action", "create_charter", "BROWSER WALLET QUALIFICATION"],
     ["Wallet approval", "PENDING MANUAL", "No approval requested by this diagnostic"],
