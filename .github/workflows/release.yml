@@ -2,9 +2,11 @@ name: CharterLock release gates
 
 on:
   push:
-    branches: [master]
+    branches:
+      - main
+      - 'release/**'
   pull_request:
-    branches: [master]
+    branches: [main]
 
 permissions:
   contents: read
