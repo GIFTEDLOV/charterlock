@@ -146,6 +146,66 @@
     "final_case_state": "CHALLENGEABLE",
     "terminal_state_verified": false
   },
+  "phase6b": {
+    "existing_case": {
+      "charter_id": "CHR-00000001",
+      "case_id": "CASE-00000001",
+      "state_before": "CHALLENGEABLE",
+      "generation_before": 1,
+      "finalization_attempted": false,
+      "finalization_eligibility": false,
+      "finalization_rejection": "CHARTERLOCK:CHALLENGE_WINDOW_OPEN",
+      "terminal_state_verified": false
+    },
+    "business_fixture": {
+      "document": "docs/provenance/LIVE_BUSINESS_VERDICT_FIXTURE.md",
+      "url": "https://www.iana.org/help/example-domains",
+      "effective_url": "https://www.iana.org/help/example-domains",
+      "http_status": 200,
+      "sha256": "9adb74216b75a090d7b8764453146efc9480942bedc0616c5406a009a5a9c43e",
+      "bytes": 6661,
+      "authority": "iana-example-domains",
+      "temporal_mode": "OFFICIAL_CONFIRMATION_BY_DEADLINE"
+    },
+    "charter_id": "CHR-00000002",
+    "case_id": "CASE-00000002",
+    "evidence_id": "EVID-00000003",
+    "evidence_root": "0x3f7198700334227f9d92bdf6d60bfc7eead1dc2035ee840c7e0acfbdbdf3fbbb",
+    "transactions": {
+      "create_charter": "0xa965ab7092edcc53788b04f600aa66b6fb965a0f92e320f0db8f5dbb2566c265",
+      "add_authority_rule": "0x254d6db27f29680510a174eec2e37ae69b62a9985e451053bab51052e366c415",
+      "freeze_charter": "0x23edda912b7703c0b2f56024889cfabd4fa15ef5303355c51cfd2708a8f2c8a8",
+      "open_case": "0x1de42fd3ee2a6321840ecd26d259fa360268977f55de5d3d47229d141536d31a",
+      "add_evidence": "0xdfda7e3ad1923af825bfe4a98255352b4b253e71dc2092434c043a9715971144",
+      "seal_evidence": "0x1ebb86fa49b71ec65a095e39d4ae6da807a34a7bf3fad536106c461c9a22f935",
+      "adjudicate": "0x8241ac0f4cd256c0605d04f34faa93ced3010bf2e4e61d8865feeedd1a7b80bb"
+    },
+    "resolution": {
+      "resolution_id": "RES-00000003",
+      "generation": 0,
+      "canonical_state": "SOURCE_UNAVAILABLE",
+      "business_outcome": null,
+      "failure_causes": ["SOURCE_UNAVAILABLE"],
+      "semantic_vector": {
+        "selected_outcome": "INCONCLUSIVE",
+        "event_occurred": false,
+        "event_before_deadline": false,
+        "confirmation_before_deadline": false,
+        "authority_requirement_met": false,
+        "corroboration_requirement_met": false,
+        "evidence_conflict": false,
+        "evidence_sufficient": false
+      },
+      "live_business_verdict": "NOT_PROVEN"
+    },
+    "result_shopping_guard": "READ_ONLY_SIMULATION_REJECTED=REJECTED_PRECONDITION; BROADCAST=NO",
+    "browser_wallet": {
+      "attempted": false,
+      "status": "BLOCKED",
+      "reason": "No browser surface or active wallet session was available."
+    },
+    "new_chain_writes": 7
+  },
   "frontend": {
     "controlled_mode_preserved": true,
     "live_reads": true,

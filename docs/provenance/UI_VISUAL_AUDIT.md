@@ -2,6 +2,15 @@
 
 Date: 2026-09-29
 
+## Phase 6B verification
+
+The controlled visual capture was regenerated after the live-proof update at
+all required widths: `1440x1000`, `768x1000`, `430x932`, and `390x844` across
+14 routes. The capture reported `consoleErrorCount=0`, `runtimeErrorCount=0`,
+`overflowCount=0`, and `unlabeledInputCount=0`. Scrollable table/code regions
+remain intentionally contained; they did not create document-level overflow.
+The screenshots and machine-readable result are in `artifacts/ui-audit/`.
+
 ## Scope
 
 The interface was rebuilt around a calm, dense, dark-first product shell:

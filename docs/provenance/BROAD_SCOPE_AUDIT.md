@@ -1,13 +1,15 @@
 # CharterLock broad-scope closure audit
 
-Audit capture: 2026-09-29. This is a local closure audit for the frozen
-Studio-dev deployment and the premium interface rebuild. It records the
-working head before the closure commit as `8e9d836f70b9256e7814cc71b0e18bf2e61d86f8`;
-the final closure commit is the commit that adds this audit and the UI work.
+Audit capture: 2026-09-29. This is the Phase 6B local closure audit for the
+frozen Studio-dev deployment, final live qualification attempt, and premium
+interface rebuild. The Phase 6B parent head is
+`a8d6293e4f080613e41e063a6fe04889d53e5a3e`; the final closure commit is the
+commit that adds this addendum and the factual qualification updates.
 
-The deployed contract is frozen and was not modified in this phase. No
-blockchain write, signer access, wallet approval, GitHub push, or Vercel
-deployment occurred.
+The deployed contract is frozen and was not modified. Phase 6B performed only
+the authorized bounded Studio-dev qualification writes; no replacement
+deployment, browser-wallet approval, GitHub push, or Vercel deployment
+occurred.
 
 ## Closure matrix
 
@@ -49,3 +51,20 @@ The following are intentionally open: live terminal finalization, browser-wallet
 live write, live available-evidence business YES/NO proof, exact-head GitHub CI,
 protected release, Vercel production, production browser smoke, and submission
 freeze. None is represented as complete by this audit.
+
+## Phase 6B closure addendum
+
+This addendum supersedes only the factual evidence columns above where Phase 6B
+added new read/write evidence; it does not upgrade a layer merely because a
+transaction finalized.
+
+| AUDIT LAYER | STATUS | WHAT WAS CHECKED | EVIDENCE | EXACT ARTIFACT / FILE / TX / HASH | LIMITATION | ACTION REQUIRED |
+|---|---|---|---|---|---|---|
+| Property / state machine | PARTIAL | Existing case and new case were canonically reconciled; duplicate adjudication was simulated read-only. | Existing case remained `CHALLENGEABLE`; new case is generation 0 and `CHALLENGEABLE`; duplicate adjudication simulation rejected. | `LIVE_QUALIFICATION.md`; `0x8241ac0f4cd256c0605d04f34faa93ced3010bf2e4e61d8865feeedd1a7b80bb`; `RESULT_SHOPPING_SIMULATION=REJECTED`. | No terminal final-state proof because the existing challenge window was open and finalization precondition rejected. | Finalize only after a fresh canonical eligibility read permits it. |
+| Evidence / authority | PARTIAL | One carefully selected IANA HTTPS fixture was fetched, hashed, authority-bound, admitted, sealed, and used in consensus. | HTTP 200; 6661 bytes; SHA `9adb74216b75a090d7b8764453146efc9480942bedc0616c5406a009a5a9c43e`; root `0x3f7198700334227f9d92bdf6d60bfc7eead1dc2035ee840c7e0acfbdbdf3fbbb`. | `LIVE_BUSINESS_VERDICT_FIXTURE.md`; add evidence `0xdfda7e...71144`; seal `0x1ebb86...2f935`; adjudication `0x8241ac...80bb`. | Validators returned `SOURCE_UNAVAILABLE`; no business YES/NO is claimed. | Retain limitation; do not repeat qualification searching for a verdict. |
+| Transaction lifecycle | PASS | All seven authorized new writes followed single broadcast, immediate hash persistence, same-hash reconciliation, finality, execution, and canonical readback. | Every Phase 6B transaction has `broadcast_count=1`, `FINALIZED`, and `FINISHED_WITH_RETURN`. | `docs/provenance/live-transactions/phase6b_business_*.json`; hashes listed in `LIVE_QUALIFICATION.md`. | Existing finalization was not eligible and was not broadcast. | Apply same discipline to the next authorized finalization. |
+| Fee / value | PASS | Protocol fee and contract value remained distinct for all Phase 6B writes. | Each fee record has `userValue=0`, protocol `feeValue`, distribution `leader=100`, `validator=200`, and consumed fee data. | `docs/provenance/live-transactions/phase6b_business_*.json`; adjudication fee value `383488800010352`. | No message fees were consumed; no contract value was sent. | Keep the distinction in all UI/provenance surfaces. |
+| Full consensus | PARTIAL | Studio-dev executed the new IANA adjudication through validator consensus and persisted a canonical resolution. | `RES-00000003`, `MAJORITY_AGREE`, `FINISHED_WITH_RETURN`, typed `SOURCE_UNAVAILABLE` / `INCONCLUSIVE`. | Adjudication `0x8241ac...80bb`; case `CASE-00000002`. | Live consensus execution is proven, but a business YES/NO from available evidence is not. | Do not reinterpret technical unavailability. |
+| Frontend truth | PARTIAL | Proof UI and live configuration now identify the new qualification case and separate proven, not-proven, blocked, and pending claims. | `frontend/src/config.ts`; `frontend/src/app/pages.tsx`; production build/tests rerun after edits. | Qualification IDs `CHR-00000002` / `CASE-00000002`. | No browser-wallet surface was available; no frontend write was attempted. | Qualify the wallet path when a supported browser wallet is available. |
+| Browser | PARTIAL | Existing responsive/controlled browser coverage remains intact; UI proof claims now reflect Phase 6B limitations. | Existing Playwright and visual audit artifacts; no wallet browser surface. | `frontend/e2e/charterlock.spec.ts`; `artifacts/ui-audit/`; `frontend/src/app/pages.tsx`. | Production browser smoke, dedicated new 768px capture, and wallet approval remain outstanding. | Complete those in the release phase. |
+| Appendix A — RED FLAGS | PASS | Checked for rebroadcast, result shopping, fabricated verdict, contract change, signer misuse, and source-unavailable relabeling. | No second deployment, no duplicate adjudication broadcast, contract SHA unchanged, and UI/docs retain the limitation. | `LIVE_QUALIFICATION.md`; transaction manifests; contract SHA `70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a`. | Browser wallet and finalization remain open, not hidden. | Preserve these facts in the next release checkpoint. |

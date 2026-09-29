@@ -1,0 +1,16 @@
+[
+  "BINARY_EVENT_V1",
+  "IANA Example Domains qualification",
+  "Did IANA publish by the charter deadline that example.com and example.org are maintained for documentation purposes?",
+  "[\"YES\",\"NO\"]",
+  1790753330,
+  1790839730,
+  "OFFICIAL_CONFIRMATION_BY_DEADLINE",
+  "REGISTERED_AUTHORITY_REQUIRED",
+  "BOUND_HOSTNAME_AND_PATH",
+  1,
+  "CONFLICT_INCONCLUSIVE",
+  "UNAVAILABLE_INCONCLUSIVE",
+  3600,
+  1
+]

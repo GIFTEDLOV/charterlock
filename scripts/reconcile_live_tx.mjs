@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { createClient } from "genlayer-js";
-import { studioDevnet } from "genlayer-js/chains";
+import { createClient } from "../frontend/node_modules/genlayer-js/dist/index.js";
+import { studioDevnet } from "../frontend/node_modules/genlayer-js/dist/chains/index.js";
 
 const [statePath, hash] = process.argv.slice(2);
 if (!statePath || !hash) throw new Error("usage: reconcile_live_tx.mjs <state-json> <hash>");

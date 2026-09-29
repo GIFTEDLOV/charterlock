@@ -117,3 +117,71 @@ not used for a live write because Studio-dev returned `eth_sendTransaction
 Method not found`; no frontend write broadcast occurred. The transaction
 state-machine and network-guard behavior remain covered by the frontend test
 suite.
+
+## Phase 6B final live qualification closure
+
+Captured 2026-09-29 against the frozen contract
+`0xa79C6437Aad95F5A487373d5e1673DC5bC301be8` on Studio-dev chain `61997`.
+The contract source was not changed; the local source hash remained
+`70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a`.
+
+### Existing case reconciliation
+
+`CHR-00000001` / `CASE-00000001` was read canonically before any new write.
+It remained `CHALLENGEABLE`, generation `1`, with active resolution
+`RES-00000002`. `finalize_case` was not attempted: the contract precondition
+simulation rejected the action with `CHARTERLOCK:CHALLENGE_WINDOW_OPEN`.
+There was no finalization broadcast and no terminal-state claim.
+The required fresh post-qualification read/simulation produced the same
+non-eligible `CHALLENGEABLE` state and rejected the read-only finalization
+attempt; no finalization write was authorized by the canonical precondition.
+
+### New controlled live business-verdict qualification
+
+The single new fixture is documented in
+`LIVE_BUSINESS_VERDICT_FIXTURE.md`:
+
+- question: `Did IANA publish by the charter deadline that example.com and example.org are maintained for documentation purposes?`
+- authority: `iana-example-domains`, `OFFICIAL`, `www.iana.org`, `/help/example-domains`
+- URL/effective URL: `https://www.iana.org/help/example-domains`
+- HTTP status: `200`
+- exact bytes: `6661`
+- SHA-256: `9adb74216b75a090d7b8764453146efc9480942bedc0616c5406a009a5a9c43e`
+- temporal mode: `OFFICIAL_CONFIRMATION_BY_DEADLINE`
+
+The charter/case sequence was completed exactly once per write, with immediate
+hash persistence, same-hash reconciliation, successful execution verification,
+and canonical readback:
+
+| Action | Canonical identity | Transaction hash |
+|---|---|---|
+| create_charter | `CHR-00000002` | `0xa965ab7092edcc53788b04f600aa66b6fb965a0f92e320f0db8f5dbb2566c265` |
+| add_authority_rule | `iana-example-domains` | `0x254d6db27f29680510a174eec2e37ae69b62a9985e451053bab51052e366c415` |
+| freeze_charter | charter hash `0x9a10d41cbfec00045a8fb811e723db7fe77ac6530d58adf9018d94d1f5bc1418` | `0x23edda912b7703c0b2f56024889cfabd4fa15ef5303355c51cfd2708a8f2c8a8` |
+| open_case | `CASE-00000002` | `0x1de42fd3ee2a6321840ecd26d259fa360268977f55de5d3d47229d141536d31a` |
+| add_evidence | `EVID-00000003`, digest `9adb…9c43e`, 6661 bytes | `0xdfda7e3ad1923af825bfe4a98255352b4b253e71dc2092434c043a9715971144` |
+| seal_evidence | root `0x3f7198700334227f9d92bdf6d60bfc7eead1dc2035ee840c7e0acfbdbdf3fbbb` | `0x1ebb86fa49b71ec65a095e39d4ae6da807a34a7bf3fad536106c461c9a22f935` |
+| adjudicate | `RES-00000003`, generation `0` | `0x8241ac0f4cd256c0605d04f34faa93ced3010bf2e4e61d8865feeedd1a7b80bb` |
+
+All seven transactions finalized with `FINISHED_WITH_RETURN`. The live
+adjudication reached GenLayer consensus, but the canonical resolution is:
+
+- semantic vector: `selected_outcome=INCONCLUSIVE`, `event_occurred=false`,
+  `event_before_deadline=false`, `confirmation_before_deadline=false`,
+  `authority_requirement_met=false`, `corroboration_requirement_met=false`,
+  `evidence_conflict=false`, `evidence_sufficient=false`
+- typed state: `SOURCE_UNAVAILABLE`
+- business outcome: none
+
+This is live consensus execution, not a business YES/NO proof. The single
+authorized business-verdict attempt therefore remains `NOT_PROVEN`. No second
+case and no retry was made. A read-only duplicate-adjudication simulation was
+rejected with `REJECTED_PRECONDITION`; no duplicate transaction was broadcast.
+
+### Browser-wallet status
+
+The browser-wallet path was unavailable in this environment: no Chrome/browser
+surface was exposed and `genlayer wallet status` reported no active wallet
+session. No browser approval, wallet write, or wallet transaction hash exists.
+The seven qualification writes used the previously verified keystore/CLI path,
+not browser-wallet proof. This limitation remains visible in the proof UI.

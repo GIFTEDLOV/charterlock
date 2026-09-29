@@ -1,9 +1,44 @@
 {
   "project": "CharterLock",
   "captured_at": "2026-09-29",
-  "audit_parent_head": "8e9d836f70b9256e7814cc71b0e18bf2e61d86f8",
+  "audit_parent_head": "a8d6293e4f080613e41e063a6fe04889d53e5a3e",
   "contract_source_sha256": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
   "contract_changed": false,
+  "phase6b_addendum": {
+    "existing_case_finalization": {
+      "status": "PARTIAL",
+      "state_before": "CHALLENGEABLE",
+      "generation_before": 1,
+      "eligible": false,
+      "reason": "CHARTERLOCK:CHALLENGE_WINDOW_OPEN",
+      "broadcast_count": 0
+    },
+    "business_qualification": {
+      "status": "PARTIAL",
+      "charter_id": "CHR-00000002",
+      "case_id": "CASE-00000002",
+      "fixture_sha256": "9adb74216b75a090d7b8764453146efc9480942bedc0616c5406a009a5a9c43e",
+      "fixture_bytes": 6661,
+      "evidence_root": "0x3f7198700334227f9d92bdf6d60bfc7eead1dc2035ee840c7e0acfbdbdf3fbbb",
+      "adjudication_tx": "0x8241ac0f4cd256c0605d04f34faa93ced3010bf2e4e61d8865feeedd1a7b80bb",
+      "resolution_id": "RES-00000003",
+      "canonical_state": "SOURCE_UNAVAILABLE",
+      "selected_outcome": "INCONCLUSIVE",
+      "evidence_sufficient": false,
+      "business_verdict": "NOT_PROVEN",
+      "consensus_execution": "PASS"
+    },
+    "result_shopping_guard": {
+      "status": "PASS",
+      "method": "read-only simulateWriteContract",
+      "result": "REJECTED_PRECONDITION",
+      "broadcast": false
+    },
+    "browser_wallet": {
+      "status": "BLOCKED",
+      "reason": "No browser surface or active wallet session was available; no wallet approval or write was attempted."
+    }
+  },
   "items": [
     {"id":"repository-state","layer":"Repository state","status":"PASS","evidence":["master worktree was clean before Phase 6A","no remote configured","no ClearLC/ClearLock matches","reflog and outside forensic preservation retained"],"limitations":["closure files are uncommitted at capture time"],"next_action":"Verify clean status after the single closure commit."},
     {"id":"source-integrity","layer":"Source integrity","status":"PASS","evidence":["deployed, Git blob, clean-checkout and working-tree contract bytes match","source parity is VERIFIED","hash policy is explicit"],"limitations":["network source parity depends on deployed readback capability"],"next_action":"Recalculate the hash after future checkouts."},
