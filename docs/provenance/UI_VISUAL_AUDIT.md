@@ -98,3 +98,25 @@ then re-run the complete browser and transaction-state suite.
   broad live screenshot sampling is rate-limited by Studio-dev.
 - The flagship live case remains `CHALLENGEABLE`, so terminal-state UI is
   represented by controlled fixtures rather than fabricated live state.
+## Phase 6C release-preparation pass
+
+The controlled matrix was regenerated after the operator-facing LIVE wallet
+diagnostic was added: 14 routes at 1440, 768, 430, and 390 pixels. The run
+recorded zero console errors, zero runtime errors, zero document-level
+horizontal overflow, and zero unlabeled inputs. A separate live `/proof` smoke
+with a read-only injected-wallet stub confirmed the LIVE label, official
+Studio-dev/61997 context, deployed address, and the diagnostic panel without
+requesting approval.
+
+The screenshot inspector found no new visual defect requiring a redesign. Hash
+strings remain intentionally clipped/scrollable inside their field boundaries;
+the document itself does not overflow. The command center and evidence views
+retain dense mobile list geometry, while the proof view keeps the limitation
+hierarchy visible.
+
+Bundle follow-up: the pre-closure production bundle was approximately 944.67
+kB minified / 229.57 kB gzip. The post-closure build is 947.38 kB minified /
+230.37 kB gzip, plus the existing 2.83 kB ccip chunk and 31.15 kB CSS. A
+route-level lazy import would not materially split the current single
+`pages.tsx` module without a larger, riskier page decomposition, so no lazy
+loading change was applied in this closure.

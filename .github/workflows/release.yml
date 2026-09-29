@@ -1,0 +1,142 @@
+name: CharterLock release gates
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: charterlock-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.14"
+  NODE_VERSION: "24"
+
+jobs:
+  contracts:
+    name: contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest tests -q
+      - run: python -m compileall -q contracts
+      - run: pyright contracts/charter_lock.py
+      - run: genvm-lint lint contracts/charter_lock.py --json
+      - run: genvm-lint schema contracts/charter_lock.py --json
+
+  security:
+    name: security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest tests/test_phase4_redteam.py tests/test_phase4_state_machine.py tests/test_semantic_adjudication.py -q
+      - run: python scripts/mutation_audit.py
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: pnpm test -- --run
+        working-directory: frontend
+      - run: pnpm typecheck
+        working-directory: frontend
+      - run: pnpm lint
+        working-directory: frontend
+      - run: pnpm build
+        working-directory: frontend
+
+  integration:
+    name: integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python scripts/deploy_preflight.py --dry-run
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          schema = json.loads(Path('docs/provenance/charterlock.schema.json').read_text())
+          assert len(schema['methods']) == 21
+          assert sum(1 for item in schema['methods'].values() if item['kind'] == 'view') == 11
+          assert sum(1 for item in schema['methods'].values() if item['kind'] == 'write') == 10
+          PY
+
+  browser-e2e:
+    name: browser-e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: frontend
+      - run: pnpm e2e -- --reporter=line
+        working-directory: frontend
+
+  build-provenance:
+    name: build/provenance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          expected = '70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a'
+          source = Path('contracts/charter_lock.py').read_bytes()
+          assert hashlib.sha256(source).hexdigest() == expected
+          json.loads(Path('docs/provenance/BROAD_SCOPE_AUDIT.json').read_text())
+          json.loads(Path('docs/provenance/RELEASE_MANIFEST.json').read_text())
+          PY
+      - name: secret scan
+        shell: bash
+        run: |
+          if git grep -n -I -E 'BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY' -- ':!docs/provenance' ':!frontend/node_modules'; then
+            echo "Potential secret material found"
+            exit 1
+          fi

@@ -1,7 +1,7 @@
 {
   "project": "CharterLock",
   "captured_at": "2026-09-29",
-  "audit_parent_head": "a8d6293e4f080613e41e063a6fe04889d53e5a3e",
+  "audit_parent_head": "6f259e7c932bfc44e10cb1b0432828c7fdcb98c6",
   "contract_source_sha256": "70ca83b07e5c646d90d61d97f2a8828c4541dc955f0758eea0252e0905a1757a",
   "contract_changed": false,
   "phase6b_addendum": {
@@ -37,6 +37,47 @@
     "browser_wallet": {
       "status": "BLOCKED",
       "reason": "No browser surface or active wallet session was available; no wallet approval or write was attempted."
+    }
+  },
+  "phase6c_addendum": {
+    "read_only": true,
+    "source_unavailable_diagnosis": {
+      "status": "PARTIAL_TARGET_ENVIRONMENT_LIMITATION",
+      "contract_defect_found": false,
+      "studio_dev_limitation_found": true,
+      "exact_subcause": "UNRESOLVED_NOT_EXPOSED",
+      "observations": [
+        "Two independent admissible public HTTPS fixtures returned SOURCE_UNAVAILABLE.",
+        "Adjudication receipts reached MAJORITY_AGREE and FINISHED_WITH_RETURN with five committed/revealed votes.",
+        "gen_dbg_traceTransaction returned Method not found.",
+        "The frozen contract canonicalizes retrieval UserError and generic exceptions to SOURCE_UNAVAILABLE."
+      ],
+      "not_proven": ["DNS", "OUTBOUND_NETWORK", "TLS", "REDIRECT", "WEBDRIVER", "STATUS", "DIGEST", "BYTE_LENGTH", "VALIDATOR_DISAGREEMENT", "PROVIDER_SUBCAUSE"]
+    },
+    "existing_case_reconciliation": {
+      "case_id": "CASE-00000001",
+      "state": "CHALLENGEABLE",
+      "generation": 1,
+      "finalization_eligible": false,
+      "simulation": "REJECTED",
+      "simulation_result": "CHARTERLOCK:CHALLENGE_WINDOW_OPEN",
+      "broadcast_count": 0
+    },
+    "frontend_manual_wallet": {
+      "status": "PENDING_MANUAL",
+      "diagnostic_panel": "frontend/src/app/components.tsx",
+      "guide": "docs/provenance/BROWSER_WALLET_QUALIFICATION.md",
+      "browser_wallet_write": "NOT_ATTEMPTED"
+    },
+    "ci_audit": {
+      "status": "BLOCKED",
+      "workflows_found": 0,
+      "required_jobs": ["contracts", "security", "frontend", "integration", "browser-e2e", "build/provenance"]
+    },
+    "vercel_audit": {
+      "status": "BLOCKED_NO_DEPLOYMENT",
+      "config": "frontend/vercel.json",
+      "required_environment": ["VITE_CHARTERLOCK_MODE=live", "VITE_CHARTERLOCK_RPC_URL=https://studio-dev.genlayer.com/api", "VITE_CHARTERLOCK_CONTRACT_ADDRESS=0xa79C6437Aad95F5A487373d5e1673DC5bC301be8"]
     }
   },
   "items": [

@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { CaseRecord, Charter, ProtocolAction, Resolution, SemanticResult } from "../domain/types";
 import { TEMPORAL_DESCRIPTIONS } from "../domain/types";
 import type { TransactionPhase } from "../transactions/types";
 import { adapter } from "../contract";
+import { config } from "../config";
 import { executeTransaction, type TransactionEvent } from "../transactions/engine";
 
 export function Page({ eyebrow, title, description, actions, children }: { eyebrow?: string; title: string; description?: string; actions?: ReactNode; children: ReactNode }) {
@@ -60,6 +61,42 @@ export function TransactionButton({ action, label, entityId, postcondition, disa
   };
   const busy = phase && !["CONFIRMED", "WALLET_REJECTED", "BROADCAST_FAILED", "HASH_UNKNOWN", "RPC_TIMEOUT", "FINALIZED_EXECUTION_FAILED", "CANONICAL_POSTCONDITION_FAILED", "NETWORK_MISMATCH"].includes(phase);
   return <div className="tx-action"><button className="button primary" onClick={() => void run()} disabled={disabled || Boolean(busy)}>{busy ? <><span className="spinner small"></span>{phase.replaceAll("_", " ")}</> : label}</button>{phase === "CONFIRMED" && <span className="tx-success">Canonical readback confirmed</span>}{error && <span className="tx-error" role="alert">{error.replaceAll("_", " ")}</span>}</div>;
+}
+
+export function LiveWalletDiagnostic() {
+  const [wallet, setWallet] = useState<{ available: boolean; account: string | null; chainId: number | null; error?: string }>(() => {
+    const ethereum = typeof window !== "undefined" ? (window as Window & { ethereum?: unknown }).ethereum : undefined;
+    return ethereum ? { available: true, account: null, chainId: null } : { available: false, account: null, chainId: null, error: "No injected wallet detected in this browser session." };
+  });
+
+  useEffect(() => {
+    if (config.mode !== "live") return;
+    const ethereum = (window as Window & { ethereum?: { request(args: { method: string }): Promise<unknown> } }).ethereum;
+    if (!ethereum) return;
+    void Promise.all([ethereum.request({ method: "eth_accounts" }), ethereum.request({ method: "eth_chainId" })]).then(([accounts, chain]) => {
+      const list = Array.isArray(accounts) ? accounts : [];
+      const chainId = typeof chain === "string" ? Number.parseInt(chain, 16) : null;
+      setWallet({ available: true, account: typeof list[0] === "string" ? list[0] : null, chainId });
+    }).catch(() => setWallet({ available: true, account: null, chainId: null, error: "Wallet read failed; no approval was requested." }));
+  }, []);
+
+  const networkMatch = wallet.chainId === config.chainId && Boolean(config.contractAddress);
+  const rows = [
+    ["Wallet connected", wallet.account ? "YES" : wallet.available ? "NO ACCOUNT" : "NOT DETECTED", wallet.account ?? "No address read; connect manually to begin."],
+    ["Network", networkMatch ? "MATCHED" : wallet.chainId ? "MISMATCH" : "NOT READ", "Studio-dev"],
+    ["Chain", wallet.chainId ? String(wallet.chainId) : "NOT READ", `Expected ${config.chainId}`],
+    ["Contract", config.contractAddress ?? "NOT CONFIGURED", "Locked deployment target"],
+    ["Precondition", "PENDING MANUAL", "Canonical count read before signing"],
+    ["Write action", "create_charter", "BROWSER WALLET QUALIFICATION"],
+    ["Wallet approval", "PENDING MANUAL", "No approval requested by this diagnostic"],
+    ["Submitted hash", "NOT YET OBSERVED", "Capture the exact hash after approval"],
+    ["Hash persisted", "NOT YET OBSERVED", "Persist before prolonged polling"],
+    ["Reconciliation", "PENDING MANUAL", "Reconcile the same hash only"],
+    ["Finality", "PENDING MANUAL", "Require finalized lifecycle status"],
+    ["Execution result", "PENDING MANUAL", "Require successful GenLayer execution"],
+    ["Canonical readback", "PENDING MANUAL", "Confirm the created charter from chain state"],
+  ];
+  return <Panel eyebrow="Reviewer / operator diagnostic" title="LIVE wallet qualification path" className="wallet-diagnostic-panel"><p className="muted">Read-only wallet discovery only. The page never requests approval automatically; use the manual qualification guide for the single bounded write.</p>{wallet.error && <div className="state-message error-state wallet-diagnostic-error"><span className="state-icon" aria-hidden="true">!</span><div><strong>Wallet session unavailable</strong><span>{wallet.error}</span></div></div>}<div className="wallet-diagnostic-grid" data-testid="live-wallet-diagnostic">{rows.map(([label, value, detail]) => <div className="wallet-diagnostic-row" key={label}><span>{label}</span><strong>{value}</strong><small>{detail}</small></div>)}</div></Panel>;
 }
 
 export function LifecycleRail({ caseRecord }: { caseRecord: CaseRecord }) {

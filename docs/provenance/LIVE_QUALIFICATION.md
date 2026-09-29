@@ -185,3 +185,36 @@ surface was exposed and `genlayer wallet status` reported no active wallet
 session. No browser approval, wallet write, or wallet transaction hash exists.
 The seven qualification writes used the previously verified keystore/CLI path,
 not browser-wallet proof. This limitation remains visible in the proof UI.
+## Phase 6C closure and validator-web diagnosis
+
+Fresh canonical reads reconfirmed `CASE-00000001` as `CHALLENGEABLE` at
+generation `1`, with active resolution `RES-00000002`, evidence root
+`0x4447dafda6993c57f71ec6a5de23d651a65d785097bc7ec5f57d16901388ee66`, and
+challenge deadline `1790638365`. A read-only fee/simulation path returned a
+receipt result decoding to `CHARTERLOCK:CHALLENGE_WINDOW_OPEN`; finalization
+was not broadcast. The state remains non-terminal and the terminal proof is
+pending the contract's own eligibility condition.
+
+The two independent live fixtures remain historical evidence, not business
+verdicts. Their adjudication receipts reached `MAJORITY_AGREE` and
+`FINISHED_WITH_RETURN` with five committed/revealed votes, while their
+canonical resolutions were typed `SOURCE_UNAVAILABLE` / `INCONCLUSIVE`.
+Studio-dev's `gen_dbg_traceTransaction` endpoint returned `Method not found`,
+so no DNS, TLS, browser/WebDriver, HTTP response, or provider-level cause is
+observable through the available RPC. The exact web subcause is therefore
+`UNRESOLVED_NOT_EXPOSED`; the evidence supports a validator/Studio-dev web
+availability limitation and does not identify a CharterLock contract defect.
+
+The required distinction is now explicit:
+
+- `LIVE CONSENSUS`: `PASS`.
+- `LIVE EVIDENCE IDENTITY / ADMISSION`: `PASS`.
+- `FAILURE SEPARATION`: `PASS`.
+- `LIVE VALIDATOR WEB AVAILABILITY`: `PARTIAL / BLOCKED BY TARGET ENVIRONMENT`.
+- `LIVE BUSINESS YES/NO`: `NOT PROVEN`.
+- Browser-wallet write: `PENDING MANUAL QUALIFICATION`.
+
+No new case or adjudication retry was performed. The operator-facing,
+read-only wallet diagnostic and the single bounded manual qualification guide
+are in `frontend/src/app/components.tsx` and
+`docs/provenance/BROWSER_WALLET_QUALIFICATION.md`.

@@ -239,5 +239,31 @@
     "The agent-browser executable was unavailable; the required browser smoke was performed with the installed Playwright fallback."
   ],
   "github_pushed": false,
-  "vercel_deployed": false
+  "vercel_deployed": false,
+  "phase6c": {
+    "head": "6f259e7c932bfc44e10cb1b0432828c7fdcb98c6",
+    "contract_unchanged": true,
+    "source_unavailable_diagnosis": "STUDIO_DEV_VALIDATOR_WEB_AVAILABILITY_LIMITATION; EXACT_SUBCAUSE_UNRESOLVED_NOT_EXPOSED",
+    "consensus_status": "PASS",
+    "evidence_identity_admission": "PASS",
+    "failure_separation": "PASS",
+    "business_yes_no": "NOT_PROVEN",
+    "existing_case": {
+      "case_id": "CASE-00000001",
+      "state": "CHALLENGEABLE",
+      "generation": 1,
+      "finalization_eligible": false,
+      "simulation_rejection": "CHARTERLOCK:CHALLENGE_WINDOW_OPEN",
+      "finalize_tx": null
+    },
+    "browser_wallet": {
+      "status": "PENDING_MANUAL",
+      "write_attempted": false,
+      "guide": "docs/provenance/BROWSER_WALLET_QUALIFICATION.md"
+    },
+    "diagnostic": "docs/provenance/STUDIO_DEV_SOURCE_UNAVAILABLE_DIAGNOSIS.md",
+    "release_readiness": "docs/provenance/RELEASE_READINESS.md",
+    "github_ci": "NOT_RUN",
+    "vercel": "NOT_DEPLOYED"
+  }
 }
