@@ -18,6 +18,7 @@ concurrency:
 env:
   PYTHON_VERSION: "3.14"
   NODE_VERSION: "24"
+  GENVM_VERSION: "v0.6.0-rc2"
 
 jobs:
   contracts:
@@ -33,9 +34,8 @@ jobs:
       - run: python -m pip install -r requirements-dev.txt
       - run: python -m pytest tests -q
       - run: python -m compileall -q contracts
-      - run: pyright contracts/charter_lock.py
+      - run: genvm-lint typecheck contracts/charter_lock.py --json
       - run: genvm-lint lint contracts/charter_lock.py --json
-      - run: genvm-lint schema contracts/charter_lock.py --json
 
   security:
     name: security
@@ -93,8 +93,8 @@ jobs:
           from pathlib import Path
           schema = json.loads(Path('docs/provenance/charterlock.schema.json').read_text())
           assert len(schema['methods']) == 21
-          assert sum(1 for item in schema['methods'].values() if item['kind'] == 'view') == 11
-          assert sum(1 for item in schema['methods'].values() if item['kind'] == 'write') == 10
+          assert sum(1 for item in schema['methods'].values() if item['readonly']) == 11
+          assert sum(1 for item in schema['methods'].values() if not item['readonly']) == 10
           PY
 
   browser-e2e:
@@ -114,7 +114,7 @@ jobs:
         working-directory: frontend
       - run: pnpm exec playwright install --with-deps chromium
         working-directory: frontend
-      - run: pnpm e2e -- --reporter=line
+      - run: pnpm e2e
         working-directory: frontend
 
   build-provenance:
