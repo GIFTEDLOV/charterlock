@@ -21,7 +21,8 @@ function ModeStatus({ publicView = false }: { publicView?: boolean }) {
 }
 
 export function PublicHeader() {
-  return <header className="public-header"><div className="public-header-inner"><Brand compact /><nav className="public-nav" aria-label="Public navigation"><NavLink to="/">Protocol</NavLink><NavLink to="/proof">Proof</NavLink><NavLink to="/integrate">Developers</NavLink><NavLink to="/docs">Docs</NavLink></nav><div className="public-actions"><a className="public-github" href="https://github.com/GIFTEDLOV/charterlock" target="_blank" rel="noreferrer">GitHub</a><Link className="button primary compact-button" to="/app">Launch app</Link><button className="mobile-menu-button" type="button" aria-label="Open navigation">Menu</button></div></div></header>;
+  const [menuOpen, setMenuOpen] = useState(false);
+  return <header className="public-header"><div className="public-header-inner"><Brand compact /><nav className="public-nav" aria-label="Public navigation"><NavLink to="/">Protocol</NavLink><NavLink to="/proof">Proof</NavLink><NavLink to="/integrate">Developers</NavLink><NavLink to="/docs">Docs</NavLink></nav><div className="public-actions"><a className="public-github" href="https://github.com/GIFTEDLOV/charterlock" target="_blank" rel="noreferrer">GitHub</a><Link className="button primary compact-button" to="/app">Launch app</Link><button className="mobile-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>Menu</button></div></div>{menuOpen && <nav className="mobile-public-nav" aria-label="Mobile public navigation"><NavLink to="/" onClick={() => setMenuOpen(false)}>Protocol</NavLink><NavLink to="/proof" onClick={() => setMenuOpen(false)}>Proof</NavLink><NavLink to="/integrate" onClick={() => setMenuOpen(false)}>Developers</NavLink><NavLink to="/docs" onClick={() => setMenuOpen(false)}>Docs</NavLink></nav>}</header>;
 }
 
 export function PublicFooter() {

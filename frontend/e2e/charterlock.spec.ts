@@ -15,7 +15,7 @@ import { test, expect } from "@playwright/test";
     await page.goto("/cases/CASE-00000002/evidence"); await page.getByRole("button", { name: "Commit evidence metadata" }).click(); await expect(page.getByText("EVID-00000003")).toBeVisible();
     await page.getByRole("button", { name: "Seal evidence snapshot" }).click(); await expect(page.getByText("Sealed", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Adjudicate sealed evidence" }).click(); await expect(page.getByRole("button", { name: "Adjudicate sealed evidence" })).toHaveCount(0); await page.goto("/cases/CASE-00000002/resolution"); await expect(page.getByText("YES").first()).toBeVisible(); await expect(page.getByText("Event occurred")).toBeVisible();
-    await page.goto("/cases/CASE-00000002/challenge"); await page.getByRole("button", { name: "Submit procedural challenge" }).click(); await expect(page.getByText("Challenge accepted for readjudication")).toBeVisible();
+    await page.goto("/cases/CASE-00000002/challenge"); await page.getByText("PROCEDURAL_VIOLATION", { exact: true }).click(); await page.getByRole("button", { name: "Submit challenge" }).click(); await expect(page.getByText("Challenge accepted for readjudication")).toBeVisible();
     await page.getByRole("button", { name: "Readjudicate" }).click(); await expect(page.getByText("Readjudication complete")).toBeVisible();
     await page.getByRole("button", { name: "Finalize case" }).click(); await expect(page.getByText("Final resolution")).toBeVisible();
     expect(errors).toEqual([]);

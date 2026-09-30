@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import type { CaseRecord, Charter, Resolution, SemanticResult } from "../../domain/types";
 import { config } from "../../config";
+import { adapter } from "../../contract";
 import { Hash, StateMessage, StatusPill, TransactionButton } from "../components";
+import { useData } from "../hooks";
 import { display, formatTimestamp } from "./helpers";
 
 export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?: string; title: string; description?: string; actions?: ReactNode }) {
@@ -62,7 +64,8 @@ export function EvidenceLedger({ ids, expandedId, onExpand }: { ids: string[]; e
 }
 
 function EvidenceLedgerRow({ id, expanded, onExpand }: { id: string; expanded: boolean; onExpand?: (id: string) => void }) {
-  return <div className={`evidence-record ${expanded ? "expanded" : ""}`}><button className="evidence-grid evidence-record-button" type="button" aria-expanded={expanded} onClick={() => onExpand?.(id)}><span className="mono">{id}</span><span>{id === "EVID-00000001" ? "official-record" : "authority"}</span><span className="muted">canonical origin</span><span>—</span><span className="mono">identity verified</span><StatusLine value="ADMISSIBLE" /></button>{expanded && <div className="evidence-record-inspector"><div><span className="eyebrow">IDENTITY</span><strong>Evidence identity is preserved by exact bytes and SHA-256.</strong><code>{id} · canonical readback required</code></div><div><span className="eyebrow">AUTHORITY</span><strong>Authority snapshot / hostname / path binding</strong><span className="muted">Transport success is not authority proof.</span></div><div><span className="eyebrow">VERIFICATION</span><strong>Digest match · byte length match · admissibility</strong></div></div>}</div>;
+  const data = useData(() => adapter.getEvidence(id), [id]); const evidence = data.data;
+  return <div className={`evidence-record ${expanded ? "expanded" : ""}`}><button className="evidence-grid evidence-record-button" type="button" aria-expanded={expanded} onClick={() => onExpand?.(id)}><span className="mono">{id}</span><span>{evidence?.authority_id ?? "Reading…"}</span><span className="muted">{evidence?.normalized_hostname ?? "Reading…"}</span><span>{evidence?.content_byte_length ?? "—"}</span><span className="mono">{evidence?.content_sha256 ? `${evidence.content_sha256.slice(0, 10)}…` : "—"}</span><StatusLine value={evidence?.admissibility_state ?? "PENDING"} /></button>{expanded && evidence && <div className="evidence-record-inspector"><div><span className="eyebrow">IDENTITY</span><strong>Exact committed bytes and SHA-256</strong><code>{evidence.content_sha256}</code><span>{evidence.content_byte_length} bytes</span></div><div><span className="eyebrow">AUTHORITY</span><strong>{evidence.authority_id}</strong><code>{evidence.normalized_hostname}</code><span className="muted">Authority binding is checked canonically.</span></div><div><span className="eyebrow">TRANSPORT / TIMING</span><strong>{evidence.normalized_url}</strong><span>Observed {formatTimestamp(evidence.observed_at)} · Published {formatTimestamp(evidence.published_at)}</span></div><div><span className="eyebrow">VERIFICATION</span><strong>{evidence.admissibility_state}</strong><span>Generation {evidence.evidence_generation + 1} · fingerprint {evidence.fingerprint.slice(0, 14)}…</span></div></div>}</div>;
 }
 
 export function LineageTimeline({ history }: { history: Resolution[] }) {

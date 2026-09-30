@@ -58,6 +58,7 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
 .button.secondary:hover { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.25); }
 .compact-button { min-height: 32px; }
 .mobile-menu-button { display: none; border: 0; background: none; color: var(--secondary); font-size: 12px; }
+.mobile-public-nav { display: none; }
 
 .public-width { width: min(var(--max), calc(100% - 64px)); margin-inline: auto; }
 .public-page { overflow: hidden; }
@@ -478,6 +479,9 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
   .public-nav, .public-github { display: none; }
   .public-actions { margin-left: auto; }
   .mobile-menu-button { display: block; }
+  .mobile-public-nav { display: grid; gap: 2px; padding: 8px 16px 12px; border-top: 1px solid var(--border); background: var(--surface); }
+  .mobile-public-nav a { padding: 10px 8px; color: var(--secondary); font-size: 13px; }
+  .mobile-public-nav a.active { color: var(--text); background: var(--elevated); }
   .public-width, .public-footer { width: calc(100% - 32px); }
   .landing-hero { min-height: 0; padding-top: 65px; padding-bottom: 60px; }
   .landing-hero h1 { font-size: clamp(40px, 10vw, 54px); line-height: 1; }
