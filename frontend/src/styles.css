@@ -602,6 +602,11 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
   .application-main { min-width: 0; }
   .app-topbar { padding-inline: 16px; }
   .environment-cluster, .topbar-search span, .topbar-search kbd { display: none; }
+  .application-main { padding-bottom: 68px; }
+  .mobile-app-nav { position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); height: 60px; border-top: 1px solid var(--border); background: rgba(8,11,16,.96); backdrop-filter: blur(14px); }
+  .mobile-app-nav a { display: grid; place-items: center; align-content: center; gap: 3px; color: var(--muted); font-size: 15px; }
+  .mobile-app-nav a.active { color: var(--blue-bright); }
+  .mobile-app-nav small { font-size: 9px; }
   .overview-grid { grid-template-columns: 1fr; gap: 20px; }
   .overview-case-head { display: none; }
   .overview-case-row { grid-template-columns: 1fr auto; gap: 5px 12px; padding: 9px 0; }
