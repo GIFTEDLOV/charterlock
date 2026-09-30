@@ -392,7 +392,8 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
 .docs-outline a:hover { color: var(--text); }
 .docs-runtime { display: grid; gap: 9px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
 .docs-runtime strong { font-size: 11px; }
-.docs-runtime .hash-wrap { display: block; }
+.docs-runtime .hash-wrap { display: block; max-width: 100%; }
+.docs-runtime .hash-wrap code { display: block; overflow-wrap: anywhere; white-space: normal; }
 
 .application-shell { min-height: 100vh; display: flex; background: var(--bg); }
 .app-sidebar { position: sticky; top: 0; width: 198px; height: 100vh; flex: 0 0 198px; display: flex; flex-direction: column; padding: 15px 10px 12px; border-right: 1px solid var(--border); background: #080b10; transition: width 180ms ease, flex-basis 180ms ease; }
@@ -593,6 +594,22 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
   .docs-article-header h1 { font-size: 30px; }
   .docs-section { grid-template-columns: 28px 1fr; gap: 10px; padding: 32px 0; }
   .docs-outline { display: none; }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .app-sidebar { display: none; }
+  .application-shell { display: block; }
+  .application-main { min-width: 0; }
+  .app-topbar { padding-inline: 16px; }
+  .environment-cluster, .topbar-search span, .topbar-search kbd { display: none; }
+  .overview-grid { grid-template-columns: 1fr; gap: 20px; }
+  .overview-case-head { display: none; }
+  .overview-case-row { grid-template-columns: 1fr auto; gap: 5px 12px; padding: 9px 0; }
+  .overview-case-row .mono { grid-column: 1; }
+  .overview-case-row strong { grid-column: 1; }
+  .overview-case-row .status-pill { grid-column: 2; grid-row: 1 / span 2; justify-self: end; }
+  .overview-case-row .overview-generation { grid-column: 1; }
+  .overview-case-row small { grid-column: 2; grid-row: 3; justify-self: end; }
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
