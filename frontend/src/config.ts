@@ -1,7 +1,9 @@
 import { CHAIN_ID } from "./domain/types";
 
+export type CharterLockMode = "demo" | "live";
+
 export const config = {
-  mode: (import.meta.env.VITE_CHARTERLOCK_MODE ?? "demo") as "demo" | "live",
+  mode: (import.meta.env.VITE_CHARTERLOCK_MODE ?? "demo") as CharterLockMode,
   chainId: CHAIN_ID,
   rpcUrl: import.meta.env.VITE_CHARTERLOCK_RPC_URL ?? "https://studio-dev.genlayer.com/api",
   contractAddress: import.meta.env.VITE_CHARTERLOCK_CONTRACT_ADDRESS,
@@ -14,3 +16,11 @@ export const config = {
 };
 
 export const isLiveConfigured = config.mode === "live" && Boolean(config.contractAddress);
+
+export function contractDisplayAddress(mode: CharterLockMode, address?: string) {
+  return address ?? (mode === "live" ? "LIVE_CONTRACT_NOT_CONFIGURED" : "CONTROLLED_DEMO_NO_ADDRESS");
+}
+
+export function shouldShowControlledDemoLabel(mode: CharterLockMode) {
+  return mode !== "live";
+}

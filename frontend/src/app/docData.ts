@@ -1,0 +1,15 @@
+export const docLinks = [
+  ["Introduction", "#intro"],
+  ["Trust model", "#trust"],
+  ["Resolution charter", "#charter"],
+  ["Authority", "#authority"],
+  ["Evidence", "#evidence"],
+  ["Semantic schema", "#schema"],
+  ["Adjudication", "#adjudication"],
+  ["Challenges", "#challenges"],
+  ["Finalization", "#finalization"],
+  ["Transaction lifecycle", "#transactions"],
+  ["Security model", "#security"],
+  ["Integration", "/integrate"],
+  ["Deployment", "/proof"],
+] as const;

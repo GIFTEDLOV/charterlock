@@ -1,0 +1,32 @@
+{
+  "phase": "8B",
+  "branch": "ui/charterlock-v1.1",
+  "shells": {
+    "public": { "layout": "PublicLayout", "sidebar": false, "routes": ["/", "/proof", "/integrate"] },
+    "application": { "layout": "AppLayout", "sidebar": true, "routes": ["/app", "/charters", "/charters/new", "/charters/:id", "/cases", "/cases/:id", "/cases/:id/evidence", "/cases/:id/resolution", "/cases/:id/challenge", "/activity"] },
+    "documentation": { "layout": "DocsLayout", "sidebar": false, "routes": ["/docs"] }
+  },
+  "visual_audit": {
+    "passes": 3,
+    "routes": 14,
+    "viewports": ["1440x1000", "1024x900", "768x1024", "430x932", "390x844"],
+    "final_console_errors": 0,
+    "final_runtime_errors": 0,
+    "final_document_horizontal_overflow": 0,
+    "final_unlabeled_inputs": 0,
+    "capture_root": "C:\\Users\\DELL\\CharterLock-ui-v2-8b\\pass3",
+    "browser_tool": "Playwright fallback; agent-browser executable unavailable"
+  },
+  "architecture_checks": {
+    "public_routes_free_of_app_sidebar": true,
+    "docs_route_free_of_app_sidebar": true,
+    "global_network_warning_removed": true,
+    "mobile_app_navigation": true,
+    "route_lazy_loading": true,
+    "controlled_live_separation_preserved": true
+  },
+  "limitations": [
+    "No browser-wallet write was attempted in Phase 8B.",
+    "Live validator web availability remains a frozen v1 limitation."
+  ]
+}
