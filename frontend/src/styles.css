@@ -516,7 +516,9 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
   .app-sidebar { display: none; }
   .application-shell { display: block; }
   .app-topbar { height: 52px; padding: 0 16px; }
-  .environment-cluster, .topbar-search span, .topbar-search kbd { display: none; }
+  .environment-cluster { display: inline-flex; gap: 5px; padding: 5px 0 5px 8px; font-size: 9px; }
+  .environment-wallet { display: none; }
+  .topbar-search span, .topbar-search kbd { display: none; }
   .app-top-actions { gap: 0; }
   .app-location span:first-child { display: none; }
   .app-location b { display: none; }
@@ -601,7 +603,9 @@ h1, h2, h3, strong { letter-spacing: -.02em; }
   .application-shell { display: block; }
   .application-main { min-width: 0; }
   .app-topbar { padding-inline: 16px; }
-  .environment-cluster, .topbar-search span, .topbar-search kbd { display: none; }
+  .environment-cluster { display: inline-flex; gap: 7px; padding: 5px 0 5px 8px; font-size: 9px; }
+  .environment-wallet { display: none; }
+  .topbar-search span, .topbar-search kbd { display: none; }
   .application-main { padding-bottom: 68px; }
   .mobile-app-nav { position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); height: 60px; border-top: 1px solid var(--border); background: rgba(8,11,16,.96); backdrop-filter: blur(14px); }
   .mobile-app-nav a { display: grid; place-items: center; align-content: center; gap: 3px; color: var(--muted); font-size: 15px; }
