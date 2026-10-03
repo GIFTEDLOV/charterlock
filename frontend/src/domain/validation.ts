@@ -1,8 +1,8 @@
 import type { AuthorityDraft, CharterDraft, EvidenceDraft, SemanticResult, TemporalSemantics } from "./types";
 import { TEMPORAL_VALUES } from "./types";
+import { normalizeAllowedOutcomes, normalizeSha256 } from "./normalization";
 
 const HOSTNAME = /^(?=.{1,253}$)(?!-)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
-const SHA256 = /^(?:0x)?[a-f0-9]{64}$/i;
 const AUTHORITY_CLASSES = new Set(["OFFICIAL", "PRIMARY", "SECONDARY", "PUBLIC_RECORD", "REGULATOR"]);
 
 export function validateCharter(draft: CharterDraft): string[] {
@@ -12,8 +12,7 @@ export function validateCharter(draft: CharterDraft): string[] {
   if (new TextEncoder().encode(draft.domain).length > 128) errors.push("Domain exceeds the 128-byte limit.");
   if (!draft.question.trim()) errors.push("Question is required.");
   if (new TextEncoder().encode(draft.question).length > 4096) errors.push("Question exceeds the 4096-byte limit.");
-  const outcomes = draft.allowed_outcomes.split(",").map((value) => value.trim());
-  if (outcomes.length !== 2 || new Set(outcomes).size !== 2 || !outcomes.includes("YES") || !outcomes.includes("NO")) errors.push("Allowed outcomes must be exactly YES,NO.");
+  try { normalizeAllowedOutcomes(draft.allowed_outcomes); } catch { errors.push("Allowed outcomes must be exactly YES,NO."); }
   if (draft.event_deadline <= 0 || draft.evidence_deadline <= draft.event_deadline) errors.push("Evidence deadline must be after event deadline.");
   if (!TEMPORAL_VALUES.includes(draft.temporal_semantics)) errors.push("Select a supported temporal rule.");
   if (draft.authority_policy !== "REGISTERED_AUTHORITY_REQUIRED") errors.push("Authority policy must be REGISTERED_AUTHORITY_REQUIRED.");
@@ -54,7 +53,7 @@ export function validateEvidence(draft: EvidenceDraft): string[] {
     if (/[\\%]|\/\/|(^|\/)\.\.?($|\/)/.test(url.pathname)) errors.push("URL path contains ambiguous transport syntax.");
     if ([...draft.source_url].some((character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127)) errors.push("Control characters are not permitted in URLs.");
   } catch { errors.push("Enter a valid HTTPS evidence URL."); }
-  if (!SHA256.test(draft.content_sha256)) errors.push("Content SHA-256 must be exactly 64 hexadecimal bytes.");
+  try { normalizeSha256(draft.content_sha256); } catch { errors.push("Content SHA-256 must be exactly 64 unprefixed hexadecimal characters."); }
   if (draft.content_byte_length < 1 || draft.content_byte_length > 2_000_000) errors.push("Content byte length must be between 1 and 2,000,000.");
   if (draft.published_at < 0 || (draft.published_at !== 0 && draft.published_at > draft.observed_at)) errors.push("Published time must be before observed time.");
   return errors;

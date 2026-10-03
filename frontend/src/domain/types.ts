@@ -201,6 +201,7 @@ export interface ProtocolAdapter {
   reconcile(hash: string): Promise<ReconciliationResult>;
   precondition(action: ProtocolAction): Promise<unknown>;
   verifyPostcondition(action: ProtocolAction, precondition?: unknown): Promise<boolean>;
+  resolveCanonicalId(action: ProtocolAction, precondition?: unknown): Promise<string | undefined>;
   network(): Promise<NetworkStatus>;
 }
 
@@ -216,7 +217,7 @@ export type ProtocolAction =
   | { type: "readjudicate"; caseId: string }
   | { type: "finalize_case"; caseId: string };
 
-export interface SubmittedTransaction { hash: string; action: ProtocolAction; createdAt: number; }
+export interface SubmittedTransaction { hash: string; action: ProtocolAction; createdAt: number; canonicalId?: string; }
 export interface ReconciliationResult { hash: string; finalized: boolean; executionSucceeded: boolean; status: string; }
 export interface NetworkStatus { chainId: number; expectedChainId: number; contractAddress?: string; configured: boolean; match: boolean; }
 
