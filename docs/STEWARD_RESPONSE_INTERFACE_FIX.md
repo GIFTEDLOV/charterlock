@@ -1,6 +1,6 @@
 # CharterLock steward response — interface remediation
 
-Status: local candidate only. No push, merge, publication, contract redeployment, Vercel update, or Portal resubmission was performed.
+Status: steward-remediation release candidate. The optional live-wallet qualification was not completed because both browser approval sessions became stale before a transaction hash existed; no live write occurred during either attempt.
 
 ## Exact steward feedback
 
@@ -70,6 +70,22 @@ No placeholder or fixture ID is invented, and routing does not occur until the c
 - Browser E2E: `15/15` passing across desktop, 430px mobile, and 390px mobile. The steward path covers human-form outcomes, prefixed SHA input, unprefixed SHA input, dynamic case navigation, evidence visibility, console errors, and overflow.
 - Production bundle smoke: local Vite preview returned HTTP 200 and served the root application.
 
+## Optional live-wallet qualification limitation
+
+Two authorized Studio-dev wallet qualification attempts were made against the
+existing deployment using the production frontend integration path. Both stopped
+before the first `create_charter` transaction returned a hash because the browser
+wallet approval session heartbeat became stale. The wallet address, chain, and
+preflight state were verified, and the production adapter prepared the exact
+`["YES","NO"]` argument before approval. The queue was cleared safely after each
+stale session.
+
+No live transaction hash was observed. Therefore no charter, authority rule,
+frozen charter, case, or evidence record was created; no on-chain state changed;
+no duplicate broadcast occurred. This is a browser-wallet automation/session
+limitation, not a product or submitted-contract defect. It is not claimed as
+live transaction proof and is retained as an operational Low limitation.
+
 ## Contract and deployment decision
 
 | Item | Before | After |
@@ -81,4 +97,7 @@ No placeholder or fixture ID is invented, and routing does not occur until the c
 
 `CONTRACT_CHANGED = NO` and `CONTRACT_REDEPLOY_REQUIRED = NO`. The steward findings are fully remediated in the frontend adapter, transaction recovery, routes, and tests; no submitted-contract defect prevents integration.
 
-This document records a local candidate and does not claim live publication.
+This document does not claim live transaction publication. The optional wallet
+qualification is not required for the steward acceptance request; the submitted
+interface remediation is supported by the cross-component workflow and release
+gates above.
