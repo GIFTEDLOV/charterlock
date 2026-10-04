@@ -9,7 +9,7 @@ const success: ReconciliationResult = { hash: submitted.hash, finalized: true, e
 
 function fake(overrides: Partial<ProtocolAdapter> = {}): ProtocolAdapter {
   const base: ProtocolAdapter = {
-    mode: "demo", label: "TEST", listCharterIds: async () => [], getCharterCount: async () => 0, getCharter: async () => { throw new Error("unused"); }, getCharterIds: async () => [], getCaseCount: async () => 0, getCaseIds: async () => [], getCase: async () => { throw new Error("unused"); }, getEvidenceIds: async () => [], getEvidence: async () => { throw new Error("unused"); }, getResolution: async () => { throw new Error("unused"); }, getResolutionHistory: async () => [], getContractInfo: async () => ({ protocol: "", protocol_version: "", first_schema: "", phase: "", semantic_adjudicator_ready: true, business_outcomes: [], technical_states: [], procedural_challenge_reason_codes: [], no_privileged_override: true, no_custody_or_betting: true, charter_count: 0, case_count: 0, evidence_count: 0 }), submit: async () => submitted, reconcile: async () => success, precondition: async () => ({}), verifyPostcondition: async () => true, network: async () => ({ chainId: 61997, expectedChainId: 61997, configured: false, match: false }),
+    mode: "demo", label: "TEST", listCharterIds: async () => [], getCharterCount: async () => 0, getCharter: async () => { throw new Error("unused"); }, getCharterIds: async () => [], getCaseCount: async () => 0, getCaseIds: async () => [], getCase: async () => { throw new Error("unused"); }, getEvidenceIds: async () => [], getEvidence: async () => { throw new Error("unused"); }, getResolution: async () => { throw new Error("unused"); }, getResolutionHistory: async () => [], getContractInfo: async () => ({ protocol: "", protocol_version: "", first_schema: "", phase: "", semantic_adjudicator_ready: true, business_outcomes: [], technical_states: [], procedural_challenge_reason_codes: [], no_privileged_override: true, no_custody_or_betting: true, charter_count: 0, case_count: 0, evidence_count: 0 }), submit: async () => submitted, reconcile: async () => success, precondition: async () => ({}), verifyPostcondition: async () => true, resolveCanonicalId: async () => undefined, network: async () => ({ chainId: 61997, expectedChainId: 61997, configured: false, match: false }),
   };
   return { ...base, ...overrides };
 }
@@ -23,4 +23,46 @@ describe("transaction state machine", () => {
   it("keeps a same-hash record when startup canonical readback fails", async () => { persistPendingTransaction({ hash: submitted.hash, action: submitted.action, actionType: action.type, entityId: action.caseId, expectedPostcondition: "terminal", precondition: {}, createdAt: 1, chainId: 61997, phase: "HASH_PERSISTED" }); const adapter = fake({ verifyPostcondition: async () => false }); await reconcilePersisted(adapter); expect(loadPendingTransactions()[0].phase).toBe("CANONICAL_POSTCONDITION_FAILED"); });
   it("holds a persisted hash on startup when the live network mismatches", async () => { persistPendingTransaction({ hash: submitted.hash, action: submitted.action, actionType: action.type, entityId: action.caseId, expectedPostcondition: "terminal", precondition: {}, createdAt: 1, chainId: 61997, phase: "HASH_PERSISTED" }); const adapter = fake({ mode: "live", network: async () => ({ chainId: 61999, expectedChainId: 61997, configured: true, match: false }) }); await reconcilePersisted(adapter); expect(loadPendingTransactions()[0].phase).toBe("NETWORK_MISMATCH"); });
   it("maps wallet rejection to a typed failure", async () => { const adapter = fake({ submit: async () => { throw new Error("WALLET_REJECTED"); } }); await expect(executeTransaction(adapter, action, "terminal", action.caseId)).rejects.toThrow("WALLET_REJECTED"); });
+
+  it("returns the canonical case ID from differential readback", async () => {
+    const open: ProtocolAction = { type: "open_case", charterId: "CHR-00000009" };
+    const adapter = fake({
+      submit: async () => ({ hash: "0xopen", action: open, createdAt: 1 }),
+      precondition: async () => ({ ids: ["CASE-00000001"] }),
+      resolveCanonicalId: async () => "CASE-00000002",
+    });
+    const result = await executeTransaction(adapter, open, "case_opened", open.charterId);
+    expect(result.canonicalId).toBe("CASE-00000002");
+  });
+
+  it("retries canonical readback without rebroadcasting", async () => {
+    const open: ProtocolAction = { type: "open_case", charterId: "CHR-00000009" };
+    let submits = 0;
+    let reads = 0;
+    const adapter = fake({
+      submit: async () => { submits += 1; return { hash: "0xretry", action: open, createdAt: 1 }; },
+      precondition: async () => ({ ids: ["CASE-00000001"] }),
+      resolveCanonicalId: async () => { reads += 1; if (reads < 3) throw new Error("RPC_READ_RETRY"); return "CASE-00000002"; },
+    });
+    const result = await executeTransaction(adapter, open, "case_opened", open.charterId);
+    expect(result.canonicalId).toBe("CASE-00000002");
+    expect(submits).toBe(1);
+    expect(reads).toBe(3);
+  });
+
+  it("recovers a finalized same-hash open-case write after refresh", async () => {
+    const open: ProtocolAction = { type: "open_case", charterId: "CHR-00000009" };
+    const sameHash = { hash: "0xrefresh", action: open, createdAt: 1 };
+    persistPendingTransaction({ hash: sameHash.hash, action: open, actionType: open.type, entityId: open.charterId, expectedPostcondition: "case_opened", precondition: { ids: ["CASE-00000001"] }, createdAt: 1, chainId: 61997, phase: "HASH_PERSISTED" });
+    let submits = 0;
+    let confirmedId = "";
+    const adapter = fake({
+      submit: async () => { submits += 1; return sameHash; },
+      resolveCanonicalId: async () => "CASE-00000002",
+    });
+    await reconcilePersisted(adapter, (event) => { if (event.phase === "CONFIRMED") confirmedId = event.entityId ?? ""; });
+    expect(submits).toBe(0);
+    expect(confirmedId).toBe("CASE-00000002");
+    expect(loadPendingTransactions()).toEqual([]);
+  });
 });

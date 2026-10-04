@@ -1,6 +1,8 @@
-import { lazy, Suspense, type ReactNode } from "react";
-import { Route, Routes } from "react-router-dom";
+import { lazy, Suspense, useEffect, useRef, type ReactNode } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { AppLayout, DocsLayout, PublicLayout } from "./layouts";
+import { adapter } from "../contract";
+import { reconcilePersisted } from "../transactions/engine";
 
 const LandingRoute = lazy(() => import("./v2/public").then((module) => ({ default: module.LandingRoute })));
 const ProofRoute = lazy(() => import("./v2/public").then((module) => ({ default: module.ProofRoute })));
@@ -20,8 +22,23 @@ const ActivityRoute = lazy(() => import("./v2/activity").then((module) => ({ def
 function RouteFallback() { return <div className="route-fallback" role="status"><span className="skeleton-line wide"></span><span className="skeleton-line"></span><span className="skeleton-block"></span></div>; }
 function Lazy({ children }: { children: ReactNode }) { return <Suspense fallback={<RouteFallback />}>{children}</Suspense>; }
 
+function TransactionRecovery() {
+  const navigate = useNavigate();
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    void reconcilePersisted(adapter, (event) => {
+      if (event.phase !== "CONFIRMED" || !event.entityId || !event.action) return;
+      if (event.action.type === "open_case") navigate(`/cases/${event.entityId}`);
+      if (event.action.type === "create_charter") navigate(`/charters/${event.entityId}`);
+    });
+  }, [navigate]);
+  return null;
+}
+
 export default function App() {
-  return <Routes>
+  return <><TransactionRecovery /><Routes>
     <Route element={<PublicLayout />}>
       <Route path="/" element={<Lazy><LandingRoute /></Lazy>} />
       <Route path="/proof" element={<Lazy><ProofRoute /></Lazy>} />
@@ -40,5 +57,5 @@ export default function App() {
       <Route path="/cases/:id/challenge" element={<Lazy><CaseChallengeRoute /></Lazy>} />
       <Route path="/activity" element={<Lazy><ActivityRoute /></Lazy>} />
     </Route>
-  </Routes>;
+  </Routes></>;
 }

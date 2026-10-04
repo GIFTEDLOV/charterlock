@@ -3,6 +3,7 @@ import type {
   NetworkStatus, ProtocolAction, ProtocolAdapter, ReconciliationResult, Resolution, SemanticResult,
 } from "../domain/types";
 import { CHAIN_ID, SCHEMA_VERSION } from "../domain/types";
+import { normalizeAllowedOutcomes, normalizeSha256 } from "../domain/normalization";
 
 const DEMO_CREATOR = "0xcontrolled-demo-account";
 const DEMO_CONTRACT = "CONTROLLED_DEMO_NO_ADDRESS";
@@ -110,20 +111,36 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
   async network(): Promise<NetworkStatus> { return { chainId: CHAIN_ID, expectedChainId: CHAIN_ID, contractAddress: DEMO_CONTRACT, configured: false, match: false }; }
   async reconcile(hash: string): Promise<ReconciliationResult> { return { hash, finalized: true, executionSucceeded: true, status: "CONTROLLED_DEMO_CONFIRMED" }; }
   async precondition(action: ProtocolAction): Promise<unknown> {
-    if (action.type === "create_charter") return await this.getCharterCount();
-    if (action.type === "open_case") return await this.getCaseCount();
+    if (action.type === "create_charter") return { ids: await this.getCharterIds() };
+    if (action.type === "open_case") return { ids: await this.getCaseIds() };
+    if (action.type === "add_evidence") return { case: await this.getCase(action.caseId), ids: await this.getEvidenceIds(action.caseId) };
     if ("charterId" in action) return await this.getCharter(action.charterId);
     if ("caseId" in action) return await this.getCase(action.caseId);
     return undefined;
   }
   async verifyPostcondition(): Promise<boolean> { return true; }
+  async resolveCanonicalId(action: ProtocolAction, precondition?: unknown): Promise<string | undefined> {
+    const before = snapshotIds(precondition);
+    if (action.type === "create_charter") return uniqueNewId(before, await this.getCharterIds(), "CHARTER");
+    if (action.type === "open_case") {
+      const idValue = await uniqueNewId(before, await this.getCaseIds(), "CASE");
+      if ((await this.getCase(idValue)).charter_id !== action.charterId) throw new Error("CANONICAL_CASE_CHARTER_MISMATCH");
+      return idValue;
+    }
+    if (action.type === "add_evidence") {
+      const idValue = await uniqueNewId(before, await this.getEvidenceIds(action.caseId), "EVIDENCE");
+      if ((await this.getEvidence(idValue)).case_id !== action.caseId) throw new Error("CANONICAL_EVIDENCE_CASE_MISMATCH");
+      return idValue;
+    }
+    return undefined;
+  }
 
   async submit(action: ProtocolAction): Promise<{ hash: string; action: ProtocolAction; createdAt: number }> {
     const now = Date.now();
     let suffix = "00000000";
     if (action.type === "create_charter") {
       const charterId = id("CHR", this.state.next.charter++);
-      this.state.charters[charterId] = { ...action.payload, allowed_outcomes: action.payload.allowed_outcomes.split(",").map((value) => value.trim()), charter_id: charterId, creator: DEMO_CREATOR, state: "DRAFT", authority_ids: [], charter_hash: "" };
+      this.state.charters[charterId] = { ...action.payload, allowed_outcomes: JSON.parse(normalizeAllowedOutcomes(action.payload.allowed_outcomes)) as string[], charter_id: charterId, creator: DEMO_CREATOR, state: "DRAFT", authority_ids: [], charter_hash: "" };
       suffix = charterId.slice(-8);
     } else if (action.type === "add_authority_rule") {
       const charter = getOrThrow(this.state.charters[action.charterId], "CHARTER");
@@ -148,7 +165,7 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
       const caseValue = getOrThrow(this.state.cases[action.caseId], "CASE");
       if (caseValue.state !== "OPEN" && caseValue.state !== "CHALLENGEABLE") throw new Error("INVALID_CASE_TRANSITION");
       const evidenceId = id("EVID", this.state.next.evidence++);
-      this.state.evidence[evidenceId] = { ...action.payload, evidence_id: evidenceId, case_id: action.caseId, authority_key: `${caseValue.charter_id}::${action.payload.authority_id}`,
+      this.state.evidence[evidenceId] = { ...action.payload, content_sha256: normalizeSha256(action.payload.content_sha256), evidence_id: evidenceId, case_id: action.caseId, authority_key: `${caseValue.charter_id}::${action.payload.authority_id}`,
         normalized_url: action.payload.source_url, normalized_hostname: new URL(action.payload.source_url).hostname, evidence_generation: caseValue.state === "OPEN" ? 0 : caseValue.generation + 1,
         admissibility_state: "ADMISSIBLE", fingerprint: `0x${"b".repeat(63)}${evidenceId.slice(-1)}` };
       caseValue.evidence_count += 1; suffix = evidenceId.slice(-8);
@@ -189,3 +206,15 @@ export class ControlledDemoAdapter implements ProtocolAdapter {
 }
 
 export const demoAdapter = new ControlledDemoAdapter();
+
+function snapshotIds(value: unknown): string[] {
+  if (!value || typeof value !== "object") return [];
+  const ids = (value as { ids?: unknown }).ids;
+  return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === "string") : [];
+}
+
+async function uniqueNewId(before: string[], after: string[], label: string): Promise<string> {
+  const candidates = after.filter((id) => !before.includes(id));
+  if (candidates.length !== 1) throw new Error(candidates.length === 0 ? `${label}_READBACK_PENDING` : `AMBIGUOUS_${label}_READBACK`);
+  return candidates[0];
+}
